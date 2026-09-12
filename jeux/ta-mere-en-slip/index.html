@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Ta mère en slip — Jeux</title>
   <meta name="description" content="À 2 ou jusqu'à 12, retourne le smartphone face aux autres et devine ta combinaison de cartes en premier. Chrono réglable, cartes à l'infini, aucune donnée conservée.">
-  <meta name="theme-color" content="#0b0917">
+  <meta name="theme-color" content="#fbd509">
   <link rel="icon" href="../../assets/img/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="../../assets/css/base.css">
   <link rel="stylesheet" href="../../assets/css/jeu.css">
@@ -16,7 +16,7 @@
   <header class="entete">
     <div class="conteneur entete__interieur">
       <a class="marque" href="../../">
-        <span class="marque__pastille" aria-hidden="true">🎲</span>
+        <span class="marque__pastille" aria-hidden="true">▚</span>
         <span>Jeux</span>
       </a>
       <nav class="entete__nav" aria-label="Navigation principale">
@@ -25,6 +25,8 @@
       </nav>
     </div>
   </header>
+
+  <div class="spectre" aria-hidden="true"></div>
 
   <main id="contenu" class="conteneur jeu-page">
 
@@ -270,6 +272,7 @@
     </div>
   </footer>
 
+  <script src="../../assets/js/apparitions.js" type="module"></script>
   <script src="../../assets/js/ta-mere-en-slip.js" type="module"></script>
   <script>
     // Ouverte en « file:// », la page ne peut pas charger ses modules : plutôt

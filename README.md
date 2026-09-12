@@ -88,6 +88,42 @@ En revanche, ouvrir les fichiers par double-clic (`file://`) ne marche pas : les
 navigateurs refusent de charger des modules JavaScript depuis un fichier local.
 La page l'explique si ça arrive.
 
+## Identité visuelle
+
+L'ADN tient dans le bloc `:root` de `assets/css/base.css`, et rien d'autre ne
+contient de couleur en dur : catalogue et jeux dérivés en héritent
+automatiquement.
+
+| | |
+| --- | --- |
+| Jaune signal | `#fbd509` — barre de navigation, boutons, étiquettes, scores |
+| Jaune aplat | `#f5d749` — grandes bandes pleine largeur |
+| Noir profond | `#070b08` — fond de page et texte posé sur le jaune |
+| Noir cellule | `#0e130e` — surfaces et champs |
+| Filet | `#2c322d` — bordures de 1 px, qui dessinent la grille |
+| Texte | `#ecebe5` — titres ; `#969d97` — texte courant |
+| Spectre | dégradé jaune → vert → bleu → violet → rose → rouge, avec marques obliques |
+
+Les principes qui vont avec :
+
+- **angles droits partout** — tous les rayons valent 0, aucune ombre ;
+- **grille filetée** — les blocs sont des cellules jointives séparées par un
+  filet de 1 px, pas des cartes flottantes ;
+- **deux voix typographiques** — grotesque lourde à interlettrage serré
+  (`-0.035em`) pour les titres, qui se terminent par un point ; monospace
+  capitale très espacée (`0.14em`) pour toute l'interface : navigation,
+  boutons, étiquettes, compteurs, libellés de champs ;
+- **sections numérotées** — un filet, puis `01` en jaune et le nom de la
+  section en monospace ;
+- **le mouvement fait partie de l'identité** — les blocs entrent en ressort au
+  défilement (`--ressort`, une courbe `linear()` échantillonnée sur un ressort),
+  légèrement décalés les uns des autres.
+
+Aucune police n'est téléchargée : les deux piles s'appuient sur les polices
+système, ce qui préserve la promesse « aucune requête réseau ». Pour coller
+encore plus près, il suffirait d'héberger un fichier `woff2` et de changer
+`--police`.
+
 ## Organisation
 
 ```
@@ -96,12 +132,13 @@ index.html                      page d'accueil : le catalogue
 .nojekyll                       GitHub Pages sert le dossier tel quel
 jeux/ta-mere-en-slip/           écrans du jeu
 assets/
-  css/base.css                  socle commun : jetons de design, composants
+  css/base.css                  l'ADN : jetons, typographie, composants
   css/accueil.css               page d'accueil
   css/jeu.css                   écrans du jeu
   js/cartes.js                  paquet de base (module, pas de fichier à charger)
   js/soiree.js                  logique d'une soirée : joueurs, scores, tirage
   js/lien.js                    la soirée ↔ le fragment d'URL
+  js/apparitions.js             entrées en scène au défilement
   js/ta-mere-en-slip.js         interface et déroulé d'une manche
   img/favicon.svg
 tests/                          tests de la logique de soirée et des liens
@@ -117,3 +154,7 @@ avec Node, et se réutilisent pour un autre jeu du catalogue.
 2. Ajouter une carte dans la liste `.catalogue` de `index.html`.
 3. Garder des chemins **relatifs** (`../../assets/…`) pour que le jeu marche
    aussi dans un sous-dossier GitHub Pages.
+4. Charger `base.css` et n'écrire aucune couleur en dur : le jeu hérite alors
+   de l'identité visuelle, et suivra ses évolutions.
+5. Marquer les blocs à révéler avec `data-apparition` et charger
+   `apparitions.js`.

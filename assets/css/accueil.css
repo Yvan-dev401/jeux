@@ -1,308 +1,285 @@
 /* Page d'accueil : vitrine du catalogue. */
 
+/* ------------------------------------------------------------------ */
+/* Héros : panneau noir posé sur le champ spectral                    */
+/* ------------------------------------------------------------------ */
+
 .heros {
-  padding-block: clamp(48px, 8vw, 92px) clamp(36px, 6vw, 64px);
+  position: relative;
+  padding-block: clamp(30px, 6vw, 64px) clamp(36px, 7vw, 80px);
+  background-image: var(--spectre-marques), var(--spectre);
+  background-size: 100% 11px, 100% 100%;
 }
+
 .heros__grille {
+  position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
-  gap: clamp(28px, 5vw, 56px);
-  align-items: center;
+  gap: 0;
 }
-.heros__titre {
-  margin-bottom: 18px;
+
+.heros__panneau {
+  padding: clamp(26px, 5vw, 56px);
+  background: var(--fond);
 }
-.heros__titre span {
-  background-image: var(--degrade-marque);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-.heros__accroche {
-  max-width: 52ch;
-  font-size: clamp(1.02rem, 2vw, 1.2rem);
-  color: var(--texte-doux);
-}
-.heros__actions {
+
+.heros__rang {
   display: flex;
   flex-wrap: wrap;
-  gap: 14px;
-  margin-top: 28px;
+  gap: 8px 22px;
+  margin-bottom: 26px;
+  font-family: var(--police-mono);
+  font-size: var(--txt-xs);
+  text-transform: uppercase;
+  letter-spacing: var(--suivi-mono);
+  color: var(--texte-doux);
 }
+.heros__rang strong { color: var(--texte-doux); font-weight: 700; }
+
+.heros__titre {
+  margin-bottom: 26px;
+  font-size: clamp(2.4rem, 9vw, 4.6rem);
+}
+.heros__titre span { color: var(--accent); }
+
+.heros__accroche {
+  max-width: 46ch;
+  font-size: clamp(1rem, 2.1vw, 1.18rem);
+  color: var(--texte-doux);
+}
+
+.heros__actions {
+  display: grid;
+  gap: 12px;
+  max-width: 520px;
+  margin-top: 32px;
+}
+
 .heros__points {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px 22px;
-  margin: 26px 0 0;
+  gap: 10px;
+  margin: 30px 0 0;
   padding: 0;
   list-style: none;
-  color: var(--texte-doux);
-  font-size: 0.95rem;
 }
 .heros__points li {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-}
-.heros__points li::before {
-  content: "";
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  background-image: var(--degrade-chaud);
-}
-
-/* Empilement de cartes décoratif */
-.pile {
-  position: relative;
-  aspect-ratio: 4 / 3.4;
-  min-height: 300px;
-  overflow: hidden; /* les cartes décoratives ne débordent jamais de la page */
-}
-.pile__carte {
-  position: absolute;
-  inset: 16% 20%;
-  display: grid;
-  place-content: center;
-  gap: 8px;
-  padding: 26px;
-  border-radius: var(--rayon-xl);
-  border: 1px solid var(--bordure-forte);
-  box-shadow: var(--ombre-forte);
-  text-align: center;
-  font-weight: 900;
-  letter-spacing: -0.01em;
-}
-.pile__carte span {
-  display: block;
-  font-size: 0.8rem;
-  font-weight: 800;
-  letter-spacing: 0.16em;
+  padding: 11px 14px;
+  border: var(--filet);
+  font-family: var(--police-mono);
+  font-size: var(--txt-xs);
   text-transform: uppercase;
-  opacity: 0.72;
-}
-.pile__carte strong {
-  font-size: clamp(1.3rem, 3vw, 1.9rem);
-  line-height: 1.15;
-}
-.pile__carte--1 {
-  transform: rotate(-8deg) translate(-18%, 4%);
-  background-image: var(--degrade-carte-1);
+  letter-spacing: var(--suivi-mono);
   color: var(--texte-doux);
 }
-.pile__carte--2 {
-  transform: rotate(6deg) translate(18%, -4%);
-  background-image: var(--degrade-carte-2);
-  color: var(--accent-clair);
-}
-.pile__carte--3 {
-  transform: rotate(-2deg);
-  background-image: var(--degrade-chaud);
-  color: var(--sur-accent);
-  border-color: var(--bordure-vive);
-}
-.pile__carte--3 span { opacity: 0.66; }
 
-/* Catalogue */
+/* ------------------------------------------------------------------ */
+/* Sections numérotées                                                 */
+/* ------------------------------------------------------------------ */
+
 .section {
-  padding-block: clamp(40px, 6vw, 72px);
+  padding-block: clamp(48px, 8vw, 96px) 0;
 }
-.section__entete {
-  max-width: 62ch;
-  margin-bottom: 32px;
+
+.section__reperes {
+  display: flex;
+  align-items: baseline;
+  gap: 28px;
+  max-width: 560px;
+  padding-top: 14px;
+  border-top: var(--filet);
+  margin-bottom: 26px;
+  font-family: var(--police-mono);
+  font-size: var(--txt-xs);
+  text-transform: uppercase;
+  letter-spacing: var(--suivi-mono);
 }
+.section__numero { color: var(--accent); font-weight: 700; }
+.section__nom { color: var(--texte-doux); }
+
+.section__entete { max-width: 58ch; margin-bottom: 40px; }
+.section__entete h2 { margin-bottom: 14px; }
 .section__entete p {
+  font-size: clamp(1rem, 2vw, 1.12rem);
   color: var(--texte-doux);
 }
+
+/* ------------------------------------------------------------------ */
+/* Catalogue : une grille de cellules jointives                        */
+/* ------------------------------------------------------------------ */
 
 .catalogue {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(248px, 1fr));
-  gap: 24px;
+  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  gap: 0;
   margin: 0;
   padding: 0;
   list-style: none;
+  border-top: var(--filet);
+  border-left: var(--filet);
 }
 
 .jeu {
   position: relative;
   display: flex;
   flex-direction: column;
-  height: 100%;
-  border-radius: var(--rayon-l);
-  border: 1px solid var(--bordure);
-  background: var(--surface);
-  overflow: hidden;
-  transition: transform var(--transition), border-color var(--transition), box-shadow var(--transition);
+  border-right: var(--filet);
+  border-bottom: var(--filet);
+  background: var(--fond);
+  transition: background var(--duree) var(--courbe);
 }
-.jeu--dispo:hover {
-  transform: translateY(-5px);
-  border-color: var(--bordure-forte);
-  box-shadow: var(--ombre-douce);
-}
-.jeu--bientot {
-  opacity: 0.74;
-}
+.jeu--dispo:hover { background: var(--surface); }
+
 .jeu__visuel {
-  position: relative;
-  display: grid;
-  place-items: center;
-  aspect-ratio: 16 / 9;
-  padding: 22px;
-  text-align: center;
-  font-weight: 900;
-  font-size: clamp(1.3rem, 3vw, 1.7rem);
-  line-height: 1.12;
-  letter-spacing: -0.02em;
-  color: var(--sur-accent);
-  background-image: var(--degrade-chaud);
-}
-.jeu__visuel--violet {
-  background-image: var(--degrade-froid);
-  color: var(--sur-accent);
-}
-.jeu__visuel--nuit {
-  background-image: var(--degrade-nuit);
+  display: flex;
+  align-items: flex-end;
+  aspect-ratio: 16 / 10;
+  padding: 18px;
+  border-bottom: var(--filet);
+  background: var(--surface);
   color: var(--texte);
+  font-family: var(--police-mono);
+  font-size: var(--txt-s);
+  line-height: 1.5;
+  text-transform: uppercase;
+  letter-spacing: var(--suivi-mono);
 }
-.jeu__visuel--vert {
-  background-image: var(--degrade-succes);
+/* Le jeu disponible prend l'aplat jaune : il porte le regard. */
+.jeu--dispo .jeu__visuel {
+  background: var(--accent);
   color: var(--sur-accent);
 }
+.jeu__visuel--violet,
+.jeu__visuel--nuit,
+.jeu__visuel--vert { background: var(--surface); color: var(--texte-faible); }
+
 .jeu__corps {
   display: flex;
   flex-direction: column;
   gap: 12px;
   flex: 1;
-  padding: 22px 22px 24px;
+  padding: 22px 20px 24px;
 }
-.jeu__titre {
-  margin: 0;
-  font-size: 1.32rem;
-}
+.jeu__titre { margin: 0; font-size: 1.3rem; }
 .jeu__titre a {
+  border: 0;
   color: var(--texte);
-  text-decoration: none;
 }
 .jeu__titre a::after {
   content: "";
   position: absolute;
   inset: 0;
 }
-.jeu__titre a:hover { color: var(--accent-clair); }
+.jeu__titre a:hover { color: var(--accent); }
+
 .jeu__resume {
   margin: 0;
-  color: var(--texte-doux);
-  font-size: 0.97rem;
-}
-.jeu__meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  margin-top: auto;
-  padding-top: 8px;
-}
-.jeu__meta li {
-  padding: 5px 11px;
-  border-radius: 999px;
-  background: var(--surface-2);
-  border: 1px solid var(--bordure);
-  font-size: 0.8rem;
-  font-weight: 700;
+  font-size: var(--txt-m);
   color: var(--texte-doux);
 }
 
-/* Étapes */
+.jeu__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  margin: auto 0 0;
+  padding: 14px 0 0;
+  list-style: none;
+  font-family: var(--police-mono);
+  font-size: var(--txt-xs);
+  text-transform: uppercase;
+  letter-spacing: var(--suivi-mono);
+  color: var(--texte-faible);
+}
+
+.jeu__fleche {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  font-size: 1.2rem;
+  color: var(--sur-accent);
+  transition: transform var(--duree) var(--courbe);
+}
+.jeu--dispo:hover .jeu__fleche { transform: translateX(5px); }
+
+/* ------------------------------------------------------------------ */
+/* Étapes                                                              */
+/* ------------------------------------------------------------------ */
+
 .etapes {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
+  gap: 0;
   margin: 0;
   padding: 0;
   counter-reset: etape;
   list-style: none;
+  border-top: var(--filet);
+  border-left: var(--filet);
 }
 .etape {
-  position: relative;
-  padding: 26px 24px 24px;
-  border-radius: var(--rayon-m);
-  border: 1px solid var(--bordure);
-  background: var(--surface);
+  padding: 26px 22px 30px;
+  border-right: var(--filet);
+  border-bottom: var(--filet);
 }
 .etape::before {
   counter-increment: etape;
-  content: counter(etape);
-  display: grid;
-  place-items: center;
-  width: 40px;
-  height: 40px;
-  margin-bottom: 14px;
-  border-radius: 12px;
-  background-image: var(--degrade-marque);
-  color: var(--sur-accent);
-  font-weight: 900;
-  font-size: 1.1rem;
+  content: "0" counter(etape);
+  display: block;
+  margin-bottom: 20px;
+  font-family: var(--police-mono);
+  font-size: var(--txt-s);
+  font-weight: 700;
+  letter-spacing: var(--suivi-mono);
+  color: var(--accent);
 }
-.etape h3 { margin-bottom: 6px; }
-.etape p {
-  margin: 0;
-  color: var(--texte-doux);
-  font-size: 0.96rem;
-}
+.etape h3 { margin-bottom: 10px; font-size: 1.22rem; }
+.etape p { margin: 0; font-size: var(--txt-m); color: var(--texte-doux); }
 
-/* Confidentialité */
+/* ------------------------------------------------------------------ */
+/* Confidentialité : l'aplat jaune pleine largeur                     */
+/* ------------------------------------------------------------------ */
+
+.bande-jaune {
+  margin-top: clamp(48px, 8vw, 96px);
+  background: var(--accent-clair);
+  color: var(--sur-accent);
+}
+.bande-jaune .section__reperes { border-top-color: color-mix(in srgb, var(--sur-accent) 30%, transparent); }
+.bande-jaune .section__numero,
+.bande-jaune .section__nom { color: var(--sur-accent); }
+
 .confidentialite {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: clamp(24px, 4vw, 44px);
-  align-items: center;
-  border-radius: var(--rayon-l);
-  border: 1px solid var(--voile-succes-bord);
-  background:
-    linear-gradient(140deg, var(--voile-succes), var(--voile-accent-3)),
-    var(--surface);
-  padding: clamp(24px, 4vw, 40px);
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(28px, 5vw, 56px);
+  padding-block: clamp(44px, 7vw, 84px);
 }
-.confidentialite h2 { margin-bottom: 12px; }
-.confidentialite p { color: var(--texte-doux); }
+.confidentialite h2 { margin-bottom: 16px; color: var(--sur-accent); }
+.confidentialite p { color: color-mix(in srgb, var(--sur-accent) 78%, transparent); }
 .confidentialite ul {
   margin: 0;
   padding: 0;
   list-style: none;
-  display: grid;
-  gap: 12px;
+  border-top: 1px solid color-mix(in srgb, var(--sur-accent) 22%, transparent);
 }
 .confidentialite li {
-  display: flex;
-  gap: 12px;
-  align-items: flex-start;
-  font-size: 0.97rem;
-  color: var(--texte-doux);
+  position: relative;
+  padding: 15px 0 15px 26px;
+  border-bottom: 1px solid color-mix(in srgb, var(--sur-accent) 22%, transparent);
+  font-size: var(--txt-m);
+  color: var(--sur-accent);
 }
 .confidentialite li::before {
-  content: "✓";
-  flex: none;
-  display: grid;
-  place-items: center;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: var(--voile-succes);
-  color: var(--succes);
-  font-weight: 900;
-  font-size: 0.85rem;
+  content: "—";
+  position: absolute;
+  left: 0;
+  font-family: var(--police-mono);
+  font-weight: 700;
 }
 
-@media (max-width: 880px) {
-  .heros__grille,
-  .confidentialite {
-    grid-template-columns: minmax(0, 1fr);
-  }
-  .pile {
-    min-height: 260px;
-    order: -1;
-  }
+@media (min-width: 860px) {
+  .heros__panneau { max-width: 78%; }
+  .heros__actions { grid-template-columns: 1fr 1fr; max-width: none; }
+  .confidentialite { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .confidentialite ul { align-self: start; }
 }

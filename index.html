@@ -4,11 +4,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Jeux — le catalogue de jeux à sortir en soirée</title>
-  <meta name="description" content="Catalogue de jeux en ligne à jouer entre amis ou en famille. Une soirée, un code, aucune donnée conservée. Premier jeu disponible : Ta mère en slip.">
-  <meta name="theme-color" content="#0b0917">
+  <meta name="description" content="Catalogue de jeux en ligne à jouer entre amis ou en famille. Une soirée, un lien, aucune donnée conservée. Premier jeu disponible : Ta mère en slip.">
+  <meta name="theme-color" content="#fbd509">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Jeux — le catalogue de jeux à sortir en soirée">
-  <meta property="og:description" content="Crée une soirée, partage le code, jouez. Rien n'est sauvegardé.">
+  <meta property="og:description" content="Ouvre une soirée, passe-toi le téléphone, jouez. Rien n'est sauvegardé.">
   <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="assets/css/base.css">
   <link rel="stylesheet" href="assets/css/accueil.css">
@@ -19,14 +19,14 @@
   <header class="entete">
     <div class="conteneur entete__interieur">
       <a class="marque" href="./">
-        <span class="marque__pastille" aria-hidden="true">🎲</span>
+        <span class="marque__pastille" aria-hidden="true">▚</span>
         <span>Jeux</span>
       </a>
       <nav class="entete__nav" aria-label="Navigation principale">
         <a class="entete__lien" href="#catalogue">Catalogue</a>
         <a class="entete__lien" href="#comment-jouer">Comment jouer</a>
         <a class="entete__lien" href="#confidentialite">Vos données</a>
-        <a class="bouton bouton--petit" href="jeux/ta-mere-en-slip/">Lancer une soirée</a>
+        <a class="bouton bouton--petit" href="jeux/ta-mere-en-slip/">Jouer</a>
       </nav>
     </div>
   </header>
@@ -34,43 +34,48 @@
   <main id="contenu">
     <section class="heros">
       <div class="conteneur heros__grille">
-        <div>
-          <p class="etiquette">Jeux d'ambiance · 2 à 12 joueurs</p>
-          <h1 class="heros__titre">Le catalogue des jeux qui <span>animent vos soirées</span></h1>
+        <div class="heros__panneau">
+          <p class="heros__rang">
+            <strong>Catalogue de jeux</strong>
+            <span>2 à 12 joueurs</span>
+            <span>Sans inscription</span>
+          </p>
+          <h1 class="heros__titre"><span>Jeux.</span><br>Des soirées qui démarrent en cinq secondes.</h1>
           <p class="heros__accroche">
-            Un téléphone, une bande de potes ou la famille au complet, et c'est parti.
-            Chaque soirée vit dans votre navigateur : vous jouez à plusieurs, chacun son
-            tour, sans installation, sans compte et sans rien laisser derrière vous.
+            Un téléphone, une bande de potes ou la famille au complet. Chaque soirée
+            vit dans votre navigateur : vous jouez chacun votre tour, sans installation,
+            sans compte, sans rien laisser derrière vous.
           </p>
           <div class="heros__actions">
-            <a class="bouton" href="jeux/ta-mere-en-slip/">Jouer à Ta mère en slip</a>
-            <a class="bouton bouton--fantome" href="#catalogue">Voir le catalogue</a>
+            <a class="bouton bouton--large" href="jeux/ta-mere-en-slip/">Jouer à Ta mère en slip</a>
+            <a class="bouton bouton--fantome bouton--large" href="#catalogue">Voir le catalogue</a>
           </div>
           <ul class="heros__points">
             <li>Aucune inscription</li>
-            <li>Aucune donnée de partie enregistrée</li>
+            <li>Aucune donnée enregistrée</li>
             <li>Ça tient dans la poche</li>
           </ul>
-        </div>
-
-        <div class="pile" aria-hidden="true">
-          <div class="pile__carte pile__carte--1"><span>Personnage</span><strong>Je suis une sirène</strong></div>
-          <div class="pile__carte pile__carte--2"><span>Action</span><strong>J'allume le feu</strong></div>
-          <div class="pile__carte pile__carte--3"><span>Ta combinaison</span><strong>Je suis un chanteur d'opéra et je passe l'aspirateur</strong></div>
         </div>
       </div>
     </section>
 
     <section class="section" id="catalogue" aria-labelledby="titre-catalogue">
       <div class="conteneur">
-        <div class="section__entete">
-          <h2 id="titre-catalogue">Le catalogue</h2>
-          <p>Des jeux pensés pour être sortis en cinq secondes, autour d'une table ou dans un canapé.</p>
+        <p class="section__reperes" data-apparition>
+          <span class="section__numero">01</span>
+          <span class="section__nom">Catalogue</span>
+        </p>
+        <div class="section__entete" data-apparition>
+          <h2 id="titre-catalogue">Des jeux faits pour être sortis tout de suite.</h2>
+          <p>Autour d'une table ou dans un canapé, à deux comme à douze.</p>
         </div>
 
         <ul class="catalogue">
-          <li class="jeu jeu--dispo">
-            <div class="jeu__visuel">Ta mère en slip</div>
+          <li class="jeu jeu--dispo" data-apparition>
+            <div class="jeu__visuel">
+              Je suis un chanteur d'opéra<br>et je passe l'aspirateur
+              <span class="jeu__fleche" aria-hidden="true">→</span>
+            </div>
             <div class="jeu__corps">
               <p class="etiquette etiquette--dispo">Disponible</p>
               <h3 class="jeu__titre"><a href="jeux/ta-mere-en-slip/">Ta mère en slip</a></h3>
@@ -86,8 +91,8 @@
             </div>
           </li>
 
-          <li class="jeu jeu--bientot">
-            <div class="jeu__visuel jeu__visuel--violet">Qui a dit ça&nbsp;?</div>
+          <li class="jeu jeu--bientot" data-apparition>
+            <div class="jeu__visuel jeu__visuel--violet">« Le pire cadeau<br>que j'aie reçu »</div>
             <div class="jeu__corps">
               <p class="etiquette etiquette--bientot">Bientôt</p>
               <h3 class="jeu__titre">Qui a dit ça ?</h3>
@@ -102,8 +107,8 @@
             </div>
           </li>
 
-          <li class="jeu jeu--bientot">
-            <div class="jeu__visuel jeu__visuel--nuit">Le mot piégé</div>
+          <li class="jeu jeu--bientot" data-apparition>
+            <div class="jeu__visuel jeu__visuel--nuit">Tout le monde a<br>le mot… sauf un</div>
             <div class="jeu__corps">
               <p class="etiquette etiquette--bientot">Bientôt</p>
               <h3 class="jeu__titre">Le mot piégé</h3>
@@ -118,8 +123,8 @@
             </div>
           </li>
 
-          <li class="jeu jeu--bientot">
-            <div class="jeu__visuel jeu__visuel--vert">Mime ou rien</div>
+          <li class="jeu jeu--bientot" data-apparition>
+            <div class="jeu__visuel jeu__visuel--vert">Mimer un pingouin<br>en 30 secondes</div>
             <div class="jeu__corps">
               <p class="etiquette etiquette--bientot">Bientôt</p>
               <h3 class="jeu__titre">Mime ou rien</h3>
@@ -139,20 +144,24 @@
 
     <section class="section" id="comment-jouer" aria-labelledby="titre-comment">
       <div class="conteneur">
-        <div class="section__entete">
-          <h2 id="titre-comment">Comment ça marche</h2>
+        <p class="section__reperes" data-apparition>
+          <span class="section__numero">02</span>
+          <span class="section__nom">Comment jouer</span>
+        </p>
+        <div class="section__entete" data-apparition>
+          <h2 id="titre-comment">Trois gestes, et la soirée est lancée.</h2>
           <p>Chaque soirée est indépendante et reste sur l'appareil qui l'ouvre : deux groupes à l'autre bout du monde peuvent jouer en même temps sans jamais se croiser.</p>
         </div>
         <ol class="etapes">
-          <li class="etape">
+          <li class="etape" data-apparition>
             <h3>Ouvre ta soirée</h3>
             <p>Un clic sur le téléphone qui servira de plateau. Ajoutez les joueurs, réglez le chrono, complétez le paquet avec vos cartes maison.</p>
           </li>
-          <li class="etape">
+          <li class="etape" data-apparition>
             <h3>Passez-vous le téléphone</h3>
             <p>Chacun sa manche, écran face aux autres. Besoin de changer d'appareil ? La soirée se transfère par lien, scores compris.</p>
           </li>
-          <li class="etape">
+          <li class="etape" data-apparition>
             <h3>Jouez, puis oubliez</h3>
             <p>À la fin, tu clôtures la soirée : joueurs, scores et cartes ajoutées sont effacés immédiatement.</p>
           </li>
@@ -160,19 +169,22 @@
       </div>
     </section>
 
-    <section class="section" id="confidentialite" aria-labelledby="titre-confidentialite">
+    <section class="bande-jaune" id="confidentialite" aria-labelledby="titre-confidentialite">
       <div class="conteneur">
         <div class="confidentialite">
-          <div>
-            <p class="etiquette etiquette--dispo">Zéro sauvegarde</p>
-            <h2 id="titre-confidentialite">Ce qui se passe en soirée reste en soirée</h2>
+          <div data-apparition>
+            <p class="section__reperes">
+              <span class="section__numero">03</span>
+              <span class="section__nom">Vos données</span>
+            </p>
+            <h2 id="titre-confidentialite">Ce qui se passe en soirée reste en soirée.</h2>
             <p>
               Ce site est une simple page web : il n'y a pas de serveur de jeu derrière.
               Tout se passe dans votre navigateur, et les données d'une partie ne sont
               jamais enregistrées. Pas de base de données, pas d'historique, pas de compte.
             </p>
           </div>
-          <ul>
+          <ul data-apparition>
             <li>Aucun compte, aucun e-mail, aucun mot de passe.</li>
             <li>Prénoms, scores et cartes ajoutées ne quittent jamais votre appareil.</li>
             <li>Aucun stockage navigateur : la soirée vit dans la page et dans son lien.</li>
@@ -185,14 +197,15 @@
 
   <footer class="pied">
     <div class="conteneur pied__interieur">
-      <p>Jeux — des jeux d'ambiance à jouer ensemble, en famille ou entre amis.</p>
+      <p>Jeux — des jeux d'ambiance à jouer ensemble</p>
       <p>
         <a href="#catalogue">Catalogue</a> ·
         <a href="#comment-jouer">Comment jouer</a> ·
-        <a href="#confidentialite">Vos données</a> ·
         <a href="jeux/ta-mere-en-slip/">Ta mère en slip</a>
       </p>
     </div>
   </footer>
+
+  <script src="assets/js/apparitions.js" type="module"></script>
 </body>
 </html>
