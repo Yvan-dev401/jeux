@@ -4,21 +4,57 @@ Catalogue de jeux d'ambiance à jouer ensemble, en famille ou entre amis.
 Une page d'accueil présente les jeux disponibles ; le premier jeu en ligne est
 **Ta mère en slip**.
 
-## Principe
+Site **100 % statique** : HTML, CSS et JavaScript, aucune dépendance, aucun
+serveur, aucune étape de build. Il se publie tel quel sur GitHub Pages.
 
-Chaque groupe ouvre sa propre **soirée** : un code à 5 caractères qui isole sa
-partie de toutes les autres. Des milliers de groupes peuvent donc jouer en même
-temps, partout dans le monde, sans jamais se croiser.
+## Publier sur GitHub Pages
 
-**Aucune donnée de partie n'est sauvegardée.** Joueurs, scores, cartes ajoutées
-et tirages vivent uniquement dans la mémoire vive du serveur, le temps de la
-soirée :
+Deux chemins, au choix — le site est à la racine du dépôt, donc les deux
+fonctionnent sans rien modifier.
 
-- pas de base de données, pas d'écriture sur disque, pas de compte ;
-- tout est effacé quand l'hôte clôture la soirée ;
-- tout est effacé automatiquement après 3 h sans activité ;
-- tout disparaît au redémarrage du serveur ;
-- le navigateur ne stocke rien non plus : le code de la soirée vit dans l'URL.
+**Le plus simple (aucun réglage de workflow)**
+1. *Settings* → *Pages*
+2. *Source* : **Deploy from a branch**
+3. Branche `main`, dossier **`/ (root)`**, puis *Save*
+
+**Avec GitHub Actions** (publie après avoir lancé les tests)
+1. *Settings* → *Pages*
+2. *Source* : **GitHub Actions**
+
+Le workflow [`.github/workflows/pages.yml`](.github/workflows/pages.yml) fait le
+reste à chaque envoi sur `main`.
+
+Le site est ensuite servi sur `https://<compte>.github.io/<dépôt>/`. Tous les
+chemins du site sont relatifs : il fonctionne aussi bien à la racine d'un
+domaine que dans un sous-dossier.
+
+## Principe : une soirée, un lien
+
+Chaque groupe ouvre sa **soirée** sur le téléphone qui sert de plateau — celui
+qu'on se passe entre les manches. La soirée retient les joueurs, les scores, le
+chrono et les cartes maison.
+
+Elle est encodée dans le **fragment de l'URL** (la partie après le `#`). Deux
+conséquences utiles :
+
+- **recharger la page ne perd rien** — pratique quand quelqu'un touche au
+  mauvais bouton en pleine partie ;
+- **le bouton « Transférer » copie un lien** qui rouvre la soirée à l'identique
+  sur un autre téléphone, scores compris.
+
+Un fragment d'URL n'est jamais envoyé au serveur qui héberge la page : le
+contenu d'une soirée ne quitte donc pas les appareils qui l'ouvrent.
+
+### Aucune donnée de partie n'est sauvegardée
+
+- pas de serveur de jeu, pas de base de données, pas de compte ;
+- aucun stockage navigateur (ni `localStorage`, ni cookie) ;
+- aucune requête réseau pendant une partie ;
+- tout est effacé à la clôture de la soirée, ou en fermant l'onglet.
+
+Des milliers de groupes peuvent donc jouer en même temps partout dans le monde :
+chaque soirée est isolée par construction, puisqu'elle ne vit que sur son
+appareil.
 
 ## Le jeu : Ta mère en slip
 
@@ -30,7 +66,7 @@ Ce que la version en ligne apporte :
 
 - jusqu'à 12 joueurs ;
 - 3 fois plus de cartes — 201 cartes de base (101 personnages, 100 actions),
-  soit plus de 10 000 combinaisons ;
+  soit 10 100 combinaisons ;
 - possibilité d'ajouter des cartes à l'infini, le temps de la soirée ;
 - choix de la durée du chrono (30, 60, 90, 120 ou 180 s) ;
 - ça tient dans la poche : interface pensée pour le téléphone.
@@ -40,58 +76,44 @@ Pendant une manche : décompte de 3 s, puis les combinaisons s'enchaînent.
 téléphone quand le navigateur le permet. Le récapitulatif de la manche s'affiche
 à la fin, puis le classement de la soirée.
 
-## Démarrer
+## Développer en local
 
 ```bash
-npm start          # http://localhost:3000
-npm run dev        # rechargement automatique
-npm test           # tests unitaires (node:test)
+npm run serve   # http://localhost:8000  (python3 -m http.server)
+npm test        # tests unitaires (node:test, aucune dépendance)
 ```
 
-Aucune dépendance à installer : le serveur n'utilise que la bibliothèque
-standard de Node (≥ 18). Le port se règle avec `PORT`.
+N'importe quel serveur statique convient (`npx serve`, l'extension Live Server…).
+En revanche, ouvrir les fichiers par double-clic (`file://`) ne marche pas : les
+navigateurs refusent de charger des modules JavaScript depuis un fichier local.
+La page l'explique si ça arrive.
 
 ## Organisation
 
 ```
-public/                         site statique
-  index.html                    page d'accueil : le catalogue
-  404.html
-  jeux/ta-mere-en-slip/         écrans du jeu
-  assets/css|js|data|img        styles, scripts, paquet de cartes de base
-server/
-  index.js                      serveur HTTP (statique + API)
-  api.js                        routes JSON
-  sessions.js                   soirées en mémoire vive
-  paquet.js                     paquet de base et tirage des combinaisons
-  config.js                     réglages et garde-fous
-tests/                          tests du cycle de vie d'une soirée
+index.html                      page d'accueil : le catalogue
+404.html                        page d'erreur autonome (aucun fichier externe)
+.nojekyll                       GitHub Pages sert le dossier tel quel
+jeux/ta-mere-en-slip/           écrans du jeu
+assets/
+  css/base.css                  socle commun : jetons de design, composants
+  css/accueil.css               page d'accueil
+  css/jeu.css                   écrans du jeu
+  js/cartes.js                  paquet de base (module, pas de fichier à charger)
+  js/soiree.js                  logique d'une soirée : joueurs, scores, tirage
+  js/lien.js                    la soirée ↔ le fragment d'URL
+  js/ta-mere-en-slip.js         interface et déroulé d'une manche
+  img/favicon.svg
+tests/                          tests de la logique de soirée et des liens
+.github/workflows/pages.yml     publication sur GitHub Pages
 ```
 
-## API des soirées
-
-Toutes les réponses sont en JSON et en `Cache-Control: no-store`.
-
-| Méthode  | Route                                        | Rôle                                   |
-| -------- | -------------------------------------------- | -------------------------------------- |
-| `GET`    | `/api/sante`                                 | état du serveur, soirées en cours      |
-| `GET`    | `/api/paquet`                                | taille du paquet de base et limites    |
-| `POST`   | `/api/soirees`                               | créer une soirée, renvoie son code     |
-| `GET`    | `/api/soirees/:code`                         | état complet de la soirée              |
-| `DELETE` | `/api/soirees/:code`                         | clôturer et effacer la soirée          |
-| `PATCH`  | `/api/soirees/:code/reglages`                | durée du chrono, catégories            |
-| `POST`   | `/api/soirees/:code/joueurs`                 | ajouter un joueur (12 maximum)         |
-| `DELETE` | `/api/soirees/:code/joueurs/:id`             | retirer un joueur                      |
-| `POST`   | `/api/soirees/:code/cartes`                  | ajouter une carte à la soirée          |
-| `DELETE` | `/api/soirees/:code/cartes/:categorie/:id`   | retirer une carte ajoutée              |
-| `POST`   | `/api/soirees/:code/tirage`                  | tirer des combinaisons pour une manche |
-| `POST`   | `/api/soirees/:code/manches`                 | enregistrer le score d'une manche      |
-| `POST`   | `/api/soirees/:code/reinitialiser`           | remettre les scores à zéro             |
+`soiree.js` et `lien.js` ne touchent pas au DOM : ils se testent directement
+avec Node, et se réutilisent pour un autre jeu du catalogue.
 
 ## Ajouter un jeu au catalogue
 
-1. Créer `public/jeux/<mon-jeu>/index.html` (et ses styles/scripts dans
-   `public/assets/`).
-2. Ajouter une carte dans la liste `.catalogue` de `public/index.html`.
-3. Réutiliser l'API des soirées si le jeu a besoin d'un groupe : elle n'est pas
-   spécifique à *Ta mère en slip*.
+1. Créer `jeux/<mon-jeu>/index.html` et ses styles/scripts dans `assets/`.
+2. Ajouter une carte dans la liste `.catalogue` de `index.html`.
+3. Garder des chemins **relatifs** (`../../assets/…`) pour que le jeu marche
+   aussi dans un sous-dossier GitHub Pages.

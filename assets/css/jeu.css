@@ -536,3 +536,10 @@
   .plein-ecran { padding: 28px; }
   .tour__pied { max-width: 620px; margin-inline: auto; width: 100%; }
 }
+
+.podium__vide {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  color: var(--texte-faible);
+}

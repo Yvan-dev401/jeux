@@ -6,29 +6,29 @@
   <title>Ta mère en slip — Jeux</title>
   <meta name="description" content="À 2 ou jusqu'à 12, retourne le smartphone face aux autres et devine ta combinaison de cartes en premier. Chrono réglable, cartes à l'infini, aucune donnée conservée.">
   <meta name="theme-color" content="#0b0917">
-  <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="/assets/css/base.css">
-  <link rel="stylesheet" href="/assets/css/jeu.css">
+  <link rel="icon" href="../../assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../../assets/css/base.css">
+  <link rel="stylesheet" href="../../assets/css/jeu.css">
 </head>
 <body>
   <a class="lien-evitement" href="#contenu">Aller au contenu</a>
 
   <header class="entete">
     <div class="conteneur entete__interieur">
-      <a class="marque" href="/">
+      <a class="marque" href="../../">
         <span class="marque__pastille" aria-hidden="true">🎲</span>
         <span>Jeux</span>
       </a>
       <nav class="entete__nav" aria-label="Navigation principale">
-        <a class="entete__lien" href="/#catalogue">Catalogue</a>
-        <a class="entete__lien" href="/#confidentialite">Vos données</a>
+        <a class="entete__lien" href="../../#catalogue">Catalogue</a>
+        <a class="entete__lien" href="../../#confidentialite">Vos données</a>
       </nav>
     </div>
   </header>
 
   <main id="contenu" class="conteneur jeu-page">
 
-    <!-- ÉCRAN 1 : présentation + créer / rejoindre une soirée -->
+    <!-- ÉCRAN 1 : présentation + ouvrir / reprendre une soirée -->
     <section class="ecran" id="ecran-depart" aria-labelledby="titre-jeu">
       <div class="presentation">
         <div>
@@ -55,7 +55,7 @@
           <p class="note" style="margin-bottom: 16px;">Pour les connaisseurs du jeu de société :</p>
           <ul class="ameliorations">
             <li>Jusqu'à 12 joueurs</li>
-            <li>3 fois plus de cartes (<span id="compte-cartes">plus de 200 cartes</span>)</li>
+            <li>3 fois plus de cartes (<span id="compte-cartes">201 cartes de base</span>)</li>
             <li>Possibilité d'ajouter des cartes à l'infini</li>
             <li>Choix de la durée du chrono</li>
             <li>Ça tient dans la poche</li>
@@ -64,36 +64,44 @@
       </div>
 
       <p class="message message--erreur" id="erreur-depart" role="alert" hidden></p>
+      <p class="message message--erreur" id="alerte-fichier" role="alert" hidden>
+        Cette page est ouverte directement depuis un fichier, ce qui empêche le
+        navigateur de charger ses scripts. Publie le dossier (GitHub Pages) ou
+        lance un petit serveur local — par exemple <code>npm run serve</code> —
+        puis ouvre <code>http://localhost:8000/</code>.
+      </p>
 
       <div class="depart">
         <div class="panneau">
           <h2>Nouvelle soirée</h2>
           <p>
-            Crée une soirée pour ce soir : tu reçois un code à partager avec le groupe.
-            Les joueurs, les scores et vos cartes maison vivent uniquement pendant cette soirée.
+            Ouvre la soirée sur le téléphone qui servira de plateau : c'est lui qu'on se
+            passera entre les manches. Joueurs, scores et cartes maison n'existent que
+            le temps de cette soirée.
           </p>
           <form id="form-creer" novalidate>
             <label class="champ">
               <span class="champ__libelle">Nom de la soirée (facultatif)</span>
               <input type="text" id="champ-nom-soiree" name="nom" maxlength="24" placeholder="Samedi chez Léa" autocomplete="off">
             </label>
-            <button class="bouton bouton--large" type="submit">Créer la soirée</button>
+            <button class="bouton bouton--large" type="submit">Ouvrir la soirée</button>
           </form>
         </div>
 
         <div class="panneau">
-          <h2>Rejoindre une soirée</h2>
+          <h2>Reprendre une soirée</h2>
           <p>
-            Quelqu'un a déjà lancé la soirée ? Saisis son code à 5 caractères pour
-            retrouver le même groupe, les mêmes réglages et le même paquet.
+            Une soirée déjà commencée se transfère par lien : colle-le ici pour
+            récupérer les joueurs, les scores, les cartes ajoutées et le chrono, et
+            continuer la partie sur ce téléphone.
           </p>
-          <form id="form-rejoindre" novalidate>
+          <form id="form-reprendre" novalidate>
             <label class="champ">
-              <span class="champ__libelle">Code de la soirée</span>
-              <input type="text" id="champ-code" name="code" maxlength="5" inputmode="latin" autocapitalize="characters" autocomplete="off" spellcheck="false" placeholder="ABC23" aria-describedby="aide-code">
-              <span class="champ__aide" id="aide-code">5 lettres ou chiffres, sans espace.</span>
+              <span class="champ__libelle">Lien de la soirée</span>
+              <input type="text" id="champ-lien" name="lien" inputmode="url" autocomplete="off" spellcheck="false" placeholder="https://…/jeux/ta-mere-en-slip/#s=…" aria-describedby="aide-lien">
+              <span class="champ__aide" id="aide-lien">Ouvrir le lien directement marche aussi.</span>
             </label>
-            <button class="bouton bouton--violet bouton--large" type="submit">Rejoindre</button>
+            <button class="bouton bouton--violet bouton--large" type="submit">Reprendre</button>
           </form>
         </div>
       </div>
@@ -106,14 +114,19 @@
           <h1 id="titre-salon" style="font-size: clamp(1.7rem, 4vw, 2.4rem);">
             <span id="nom-soiree">Soirée</span>
           </h1>
-          <p class="note" id="info-expiration">Cette soirée s'efface toute seule après 3 h sans activité.</p>
+          <p class="note">
+            La soirée vit dans cette page : recharger ne perd rien, fermer l'onglet
+            l'efface. Rien n'est envoyé ni enregistré nulle part.
+          </p>
         </div>
         <div class="code-soiree">
           <div>
-            <span class="code-soiree__libelle">Code</span>
+            <span class="code-soiree__libelle">Soirée</span>
             <span class="code-soiree__valeur" id="valeur-code">—</span>
           </div>
-          <button class="bouton bouton--fantome bouton--petit" type="button" id="btn-copier-code">Copier</button>
+          <button class="bouton bouton--fantome bouton--petit" type="button" id="btn-transferer">
+            Transférer
+          </button>
         </div>
       </div>
 
@@ -138,7 +151,7 @@
           <div class="panneau">
             <div class="bloc__titre">
               <h2>Cartes de la soirée</h2>
-              <span class="bloc__compteur" id="compteur-cartes">0 carte ajoutée</span>
+              <span class="bloc__compteur" id="compteur-cartes">aucune carte ajoutée</span>
             </div>
             <p class="note" style="margin-bottom: 14px;">
               Complète le paquet avec vos personnages et vos actions maison. Ces cartes
@@ -152,7 +165,7 @@
               <input type="text" id="champ-carte" maxlength="80" placeholder="un pilote de rallye" aria-label="Texte de la carte" autocomplete="off">
               <button class="bouton bouton--petit bouton--violet" type="submit">Ajouter la carte</button>
             </form>
-            <p class="champ__aide" id="exemple-carte">Exemple de personnage : « une dompteuse de hamsters ».</p>
+            <p class="champ__aide" id="exemple-carte">Écris le personnage tel qu'il se lit après « Je suis ».</p>
             <ul class="liste-cartes" id="liste-cartes"></ul>
           </div>
         </div>
@@ -167,7 +180,7 @@
             </fieldset>
             <p class="note" style="margin-top: 16px;">
               Le paquet de base contient <strong id="detail-paquet">201 cartes</strong>,
-              soit des milliers de combinaisons possibles.
+              soit <strong id="detail-combinaisons">10 100</strong> combinaisons possibles.
             </p>
           </div>
 
@@ -180,7 +193,7 @@
               <select id="choix-joueur" aria-describedby="aide-joueur"></select>
               <span class="champ__aide" id="aide-joueur">Le téléphone se tient face aux autres : tu ne vois pas ta combinaison.</span>
             </label>
-            <button class="bouton bouton--large" type="button" id="btn-lancer">Lancer la manche</button>
+            <button class="bouton bouton--large" type="button" id="btn-lancer" disabled>Lancer la manche</button>
           </div>
 
           <div class="panneau">
@@ -194,8 +207,8 @@
               <button class="bouton bouton--danger bouton--petit" type="button" id="btn-cloturer">Clôturer la soirée</button>
             </div>
             <p class="note" style="margin-top: 14px;">
-              Clôturer efface immédiatement joueurs, scores et cartes ajoutées. Rien n'est
-              conservé après la soirée.
+              Clôturer efface immédiatement joueurs, scores et cartes ajoutées, et vide
+              le lien de la soirée.
             </p>
           </div>
         </div>
@@ -252,12 +265,18 @@
 
   <footer class="pied">
     <div class="conteneur pied__interieur">
-      <p><a href="/">← Retour au catalogue</a></p>
+      <p><a href="../../">← Retour au catalogue</a></p>
       <p>Aucune donnée de partie n'est enregistrée.</p>
     </div>
   </footer>
 
-  <script src="/assets/js/api.js" type="module"></script>
-  <script src="/assets/js/ta-mere-en-slip.js" type="module"></script>
+  <script src="../../assets/js/ta-mere-en-slip.js" type="module"></script>
+  <script>
+    // Ouverte en « file:// », la page ne peut pas charger ses modules : plutôt
+    // qu'une interface inerte, on explique quoi faire.
+    setTimeout(function () {
+      if (!window.__jeuPret) document.getElementById('alerte-fichier').hidden = false;
+    }, 1200);
+  </script>
 </body>
 </html>

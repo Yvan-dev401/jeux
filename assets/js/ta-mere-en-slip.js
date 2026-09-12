@@ -1,8 +1,25 @@
 // « Ta mère en slip » — enchaînement des écrans et déroulé d'une manche.
 //
-// Rien n'est stocké dans le navigateur : le code de la soirée vit dans l'URL,
-// l'état de la manche vit dans cette page et s'efface quand on la quitte.
-import { api, ErreurApi } from './api.js';
+// Site entièrement statique : aucune requête réseau, aucun stockage navigateur.
+// La soirée vit dans la mémoire de la page et dans le fragment de l'URL, ce qui
+// permet de recharger sans rien perdre et de transférer la partie par lien.
+import {
+  REGLES,
+  PAQUET_DE_BASE,
+  ErreurSoiree,
+  creerSoiree as nouvelleSoiree,
+  ajouterJoueur,
+  retirerJoueur,
+  majReglages,
+  ajouterCarte,
+  retirerCarte,
+  enregistrerManche,
+  reinitialiserScores,
+  tirerCombinaisons,
+  classement,
+  prochainJoueur
+} from './soiree.js';
+import { versFragment, depuisFragment, lienPartageable, LONGUEUR_CONFORTABLE } from './lien.js';
 
 const $ = (id) => document.getElementById(id);
 
@@ -14,19 +31,15 @@ const ecrans = {
 };
 
 const etat = {
-  limites: null,
-  paquet: null,
   soiree: null,
-  revisionAffichee: -1,
   categorieActive: 'personnages',
-  sondage: null,
   manche: null
 };
 
 const CARTES_PAR_MANCHE = 40;
 
 /* ------------------------------------------------------------------ */
-/* Utilitaires d'affichage                                            */
+/* Utilitaires d'affichage                                             */
 /* ------------------------------------------------------------------ */
 
 function montrerEcran(nom) {
@@ -35,8 +48,6 @@ function montrerEcran(nom) {
   ecrans.recap.hidden = nom !== 'recap';
   ecrans.tour.hidden = nom !== 'tour';
   document.body.style.overflow = nom === 'tour' ? 'hidden' : '';
-  if (nom !== 'salon') arreterSondage();
-  else demarrerSondage();
 }
 
 function afficherMessage(element, texte, duree = 0) {
@@ -52,58 +63,62 @@ function afficherMessage(element, texte, duree = 0) {
 
 function signalerErreur(erreur, contexte = 'salon') {
   const cible = contexte === 'depart' ? $('erreur-depart') : $('erreur-salon');
-  const message = erreur instanceof ErreurApi ? erreur.message : 'Une erreur est survenue.';
+  const message = erreur instanceof ErreurSoiree ? erreur.message : 'Une erreur est survenue.';
   afficherMessage(cible, message, 6000);
-
-  // La soirée n'existe plus : on revient au départ plutôt que d'afficher un salon fantôme.
-  if (erreur instanceof ErreurApi && erreur.statut === 404 && etat.soiree) quitterSoiree();
 }
 
 const initiale = (nom) => nom.trim().charAt(0).toUpperCase() || '?';
+const pluriel = (n, singulier, plurielMot = `${singulier}s`) => (n > 1 ? plurielMot : singulier);
+
+/** L'URL suit la soirée, sans empiler d'entrées dans l'historique. */
+function ecrireUrl() {
+  if (!etat.soiree) return;
+  window.history.replaceState(null, '', `#${versFragment(etat.soiree)}`);
+}
+
+/** Après chaque changement : on redessine et on met le lien à jour. */
+function majSoiree() {
+  rendreSalon();
+  ecrireUrl();
+}
 
 /* ------------------------------------------------------------------ */
 /* Chargement initial                                                  */
 /* ------------------------------------------------------------------ */
 
-async function initialiser() {
+function initialiser() {
   brancherEvenements();
+  construireChoixDuree();
 
-  try {
-    const { paquet, limites } = await api.paquet();
-    etat.paquet = paquet;
-    etat.limites = limites;
-    construireChoixDuree(limites);
+  $('compte-cartes').textContent = `${PAQUET_DE_BASE.total} cartes de base`;
+  $('detail-paquet').textContent =
+    `${PAQUET_DE_BASE.total} cartes (${PAQUET_DE_BASE.compte.personnages} personnages, ` +
+    `${PAQUET_DE_BASE.compte.actions} actions)`;
+  $('detail-combinaisons').textContent = PAQUET_DE_BASE.combinaisons.toLocaleString('fr-FR');
 
-    const total = Object.values(paquet.compte).reduce((a, b) => a + b, 0);
-    $('compte-cartes').textContent = `${total} cartes de base`;
-    $('detail-paquet').textContent =
-      `${total} cartes (${paquet.compte.personnages} personnages, ${paquet.compte.actions} actions)`;
-  } catch {
-    // Le jeu reste utilisable : on garde les valeurs par défaut du HTML.
-    construireChoixDuree({ dureesChrono: [30, 60, 90, 120, 180], dureeChronoDefaut: 60 });
-  }
-
-  const code = codeDepuisUrl();
-  if (code) rejoindre(code).catch(() => {});
+  const fragment = window.location.hash.slice(1);
+  if (fragment) reprendre(fragment, { silencieux: true });
 }
 
-function codeDepuisUrl() {
-  const brut = window.location.hash.replace('#', '').trim().toUpperCase();
-  return /^[A-Z0-9]{3,8}$/.test(brut) ? brut : '';
-}
-
-function construireChoixDuree(limites) {
+function construireChoixDuree() {
   const conteneur = $('choix-duree');
   conteneur.querySelectorAll('label').forEach((n) => n.remove());
-  for (const duree of limites.dureesChrono) {
+  for (const duree of REGLES.dureesChrono) {
     const label = document.createElement('label');
     label.className = 'puce-radio';
     const input = document.createElement('input');
     input.type = 'radio';
     input.name = 'duree';
     input.value = String(duree);
-    input.checked = duree === limites.dureeChronoDefaut;
-    input.addEventListener('change', () => changerDuree(duree));
+    input.checked = duree === REGLES.dureeChronoDefaut;
+    input.addEventListener('change', () => {
+      try {
+        majReglages(etat.soiree, { duree });
+        majSoiree();
+      } catch (erreur) {
+        signalerErreur(erreur);
+      }
+    });
     const span = document.createElement('span');
     span.textContent = `${duree} s`;
     label.append(input, span);
@@ -112,78 +127,64 @@ function construireChoixDuree(limites) {
 }
 
 /* ------------------------------------------------------------------ */
-/* Soirée                                                              */
+/* Ouvrir, reprendre, clôturer une soirée                              */
 /* ------------------------------------------------------------------ */
 
-async function creerSoiree(nom) {
+function ouvrirSoiree(nom) {
   try {
-    const { soiree } = await api.creerSoiree(nom);
-    appliquerSoiree(soiree, { forcer: true });
-    window.location.hash = soiree.code;
-    montrerEcran('salon');
-    afficherMessage($('info-salon'), `Soirée créée. Partage le code ${soiree.code} !`, 6000);
-    $('champ-joueur').focus();
+    etat.soiree = nouvelleSoiree({ nom });
   } catch (erreur) {
     signalerErreur(erreur, 'depart');
+    return;
   }
+  majSoiree();
+  montrerEcran('salon');
+  afficherMessage($('info-salon'), 'Soirée ouverte. Ajoute les joueurs pour commencer !', 6000);
+  $('champ-joueur').focus();
 }
 
-async function rejoindre(code) {
+function reprendre(lien, { silencieux = false } = {}) {
   try {
-    const { soiree } = await api.lireSoiree(code);
-    appliquerSoiree(soiree, { forcer: true });
-    window.location.hash = soiree.code;
-    montrerEcran('salon');
+    etat.soiree = depuisFragment(lien);
   } catch (erreur) {
-    if (erreur instanceof ErreurApi && erreur.statut === 404) {
-      window.location.hash = '';
-      montrerEcran('depart');
-    }
-    signalerErreur(erreur, 'depart');
-    throw erreur;
+    if (!silencieux) signalerErreur(erreur, 'depart');
+    else afficherMessage($('erreur-depart'), 'Ce lien de soirée est illisible.', 6000);
+    window.history.replaceState(null, '', window.location.pathname);
+    montrerEcran('depart');
+    return false;
   }
+  majSoiree();
+  montrerEcran('salon');
+  return true;
 }
 
-function quitterSoiree() {
+function cloturerSoiree() {
+  const message =
+    'Clôturer la soirée ? Joueurs, scores et cartes ajoutées seront effacés immédiatement et définitivement.';
+  if (!window.confirm(message)) return;
   etat.soiree = null;
-  etat.revisionAffichee = -1;
   etat.manche = null;
-  arreterSondage();
-  window.location.hash = '';
+  window.history.replaceState(null, '', window.location.pathname);
   montrerEcran('depart');
+  afficherMessage($('erreur-depart'), '', 0);
+  $('champ-lien').value = '';
 }
 
-function appliquerSoiree(soiree, { forcer = false } = {}) {
-  etat.soiree = soiree;
-  if (!forcer && soiree.revision === etat.revisionAffichee) return;
-  etat.revisionAffichee = soiree.revision;
-  rendreSalon();
-}
-
-async function rafraichir() {
-  if (!etat.soiree) return;
+async function transferer() {
+  const lien = lienPartageable(etat.soiree);
+  const tropLong = lien.length > LONGUEUR_CONFORTABLE;
   try {
-    const { soiree } = await api.lireSoiree(etat.soiree.code);
-    appliquerSoiree(soiree);
-  } catch (erreur) {
-    if (erreur instanceof ErreurApi && erreur.statut === 404) {
-      afficherMessage($('erreur-depart'), 'La soirée est terminée.', 6000);
-      quitterSoiree();
-    }
+    await navigator.clipboard.writeText(lien);
+    afficherMessage(
+      $('info-salon'),
+      tropLong
+        ? 'Lien copié. Il est long (beaucoup de cartes maison) : certaines applis de messagerie risquent de le couper.'
+        : 'Lien de la soirée copié ! Ouvre-le sur l’autre téléphone pour y poursuivre la partie.',
+      9000
+    );
+  } catch {
+    afficherMessage($('info-salon'), `Copie impossible : le lien de la soirée est dans la barre d’adresse.`, 9000);
   }
-}
-
-function demarrerSondage() {
-  if (etat.sondage) return;
-  etat.sondage = window.setInterval(() => {
-    if (document.visibilityState === 'visible') rafraichir();
-  }, 5000);
-}
-
-function arreterSondage() {
-  if (!etat.sondage) return;
-  window.clearInterval(etat.sondage);
-  etat.sondage = null;
 }
 
 /* ------------------------------------------------------------------ */
@@ -196,12 +197,7 @@ function rendreSalon() {
 
   $('nom-soiree').textContent = soiree.nom;
   $('valeur-code').textContent = soiree.code;
-  $('compteur-manches').textContent =
-    `${soiree.manches} manche${soiree.manches > 1 ? 's' : ''}`;
-
-  const heures = Math.round(soiree.expireDans / 3600000);
-  $('info-expiration').textContent =
-    `Cette soirée et toutes ses données s'effacent après ${heures} h sans activité.`;
+  $('compteur-manches').textContent = `${soiree.manches} ${pluriel(soiree.manches, 'manche')}`;
 
   rendreJoueurs(soiree);
   rendreCartes(soiree);
@@ -212,8 +208,6 @@ function rendreSalon() {
 }
 
 function rendreJoueurs(soiree) {
-  const max = etat.limites?.maxJoueurs ?? 12;
-  const min = etat.limites?.minJoueurs ?? 2;
   const liste = $('liste-joueurs');
   liste.textContent = '';
 
@@ -232,22 +226,29 @@ function rendreJoueurs(soiree) {
 
     const score = document.createElement('span');
     score.className = 'joueur__score';
-    score.textContent = `${joueur.score} pt${joueur.score > 1 ? 's' : ''}`;
+    score.textContent = `${joueur.score} ${pluriel(joueur.score, 'pt')}`;
 
     const retirer = document.createElement('button');
     retirer.type = 'button';
     retirer.className = 'icone-bouton';
     retirer.textContent = '✕';
     retirer.setAttribute('aria-label', `Retirer ${joueur.nom}`);
-    retirer.addEventListener('click', () => retirerJoueur(joueur.id));
+    retirer.addEventListener('click', () => {
+      try {
+        retirerJoueur(soiree, joueur.id);
+        majSoiree();
+      } catch (erreur) {
+        signalerErreur(erreur);
+      }
+    });
 
     li.append(pastille, nom, score, retirer);
     liste.append(li);
   }
 
-  $('compteur-joueurs').textContent = `${soiree.joueurs.length} / ${max}`;
-  $('note-joueurs').hidden = soiree.joueurs.length >= min;
-  $('champ-joueur').disabled = soiree.joueurs.length >= max;
+  $('compteur-joueurs').textContent = `${soiree.joueurs.length} / ${REGLES.maxJoueurs}`;
+  $('note-joueurs').hidden = soiree.joueurs.length >= REGLES.minJoueurs;
+  $('champ-joueur').disabled = soiree.joueurs.length >= REGLES.maxJoueurs;
 
   const select = $('choix-joueur');
   const choixPrecedent = select.value;
@@ -255,20 +256,18 @@ function rendreJoueurs(soiree) {
   for (const joueur of soiree.joueurs) {
     const option = document.createElement('option');
     option.value = joueur.id;
-    option.textContent = `${joueur.nom} — ${joueur.score} pt${joueur.score > 1 ? 's' : ''}`;
+    option.textContent = `${joueur.nom} — ${joueur.score} ${pluriel(joueur.score, 'pt')}`;
     select.append(option);
   }
   if (soiree.joueurs.some((j) => j.id === choixPrecedent)) {
     select.value = choixPrecedent;
   } else {
-    // Par défaut : celui qui a joué le moins de manches.
-    const suivant = [...soiree.joueurs].sort((a, b) => a.manchesJouees - b.manchesJouees)[0];
+    const suivant = prochainJoueur(soiree);
     if (suivant) select.value = suivant.id;
   }
 
-  const pretAJouer = soiree.joueurs.length >= min;
-  $('btn-lancer').disabled = !pretAJouer;
   select.disabled = soiree.joueurs.length === 0;
+  $('btn-lancer').disabled = soiree.joueurs.length < REGLES.minJoueurs;
 }
 
 function rendreCartes(soiree) {
@@ -277,18 +276,20 @@ function rendreCartes(soiree) {
   const total = soiree.cartesPerso.personnages.length + soiree.cartesPerso.actions.length;
 
   $('compteur-cartes').textContent =
-    total === 0 ? 'aucune carte ajoutée' : `${total} carte${total > 1 ? 's' : ''} ajoutée${total > 1 ? 's' : ''}`;
+    total === 0
+      ? 'aucune carte ajoutée'
+      : `${total} ${pluriel(total, 'carte')} ${pluriel(total, 'ajoutée')}`;
 
   for (const onglet of document.querySelectorAll('.onglet')) {
     onglet.setAttribute('aria-selected', String(onglet.dataset.categorie === categorie));
   }
 
   $('champ-carte').placeholder =
-    categorie === 'personnages' ? 'un pilote de rallye' : "je répare un vélo";
+    categorie === 'personnages' ? 'un pilote de rallye' : 'je répare un vélo';
   $('exemple-carte').textContent =
     categorie === 'personnages'
-      ? 'Écris le personnage tel qu\'il se lit après « Je suis ».'
-      : 'Écris l\'action à la première personne : « je danse la salsa ».';
+      ? 'Écris le personnage tel qu’il se lit après « Je suis ».'
+      : 'Écris l’action à la première personne : « je danse la salsa ».';
 
   const liste = $('liste-cartes');
   liste.textContent = '';
@@ -301,7 +302,14 @@ function rendreCartes(soiree) {
     supprimer.type = 'button';
     supprimer.textContent = '✕';
     supprimer.setAttribute('aria-label', `Supprimer la carte ${carte.texte}`);
-    supprimer.addEventListener('click', () => retirerCarte(categorie, carte.id));
+    supprimer.addEventListener('click', () => {
+      try {
+        retirerCarte(soiree, categorie, carte.id);
+        majSoiree();
+      } catch (erreur) {
+        signalerErreur(erreur);
+      }
+    });
     li.append(texte, supprimer);
     liste.append(li);
   }
@@ -313,17 +321,13 @@ function rendrePodium(soiree) {
 
   if (soiree.joueurs.length === 0) {
     const vide = document.createElement('li');
-    vide.style.border = 'none';
-    vide.style.background = 'transparent';
-    vide.style.padding = '0';
-    vide.style.color = 'var(--texte-faible)';
+    vide.className = 'podium__vide';
     vide.textContent = 'Le classement apparaîtra après la première manche.';
     podium.append(vide);
     return;
   }
 
-  const classement = [...soiree.joueurs].sort((a, b) => b.score - a.score || a.nom.localeCompare(b.nom));
-  classement.forEach((joueur, index) => {
+  classement(soiree).forEach((joueur, index) => {
     const li = document.createElement('li');
     const rang = document.createElement('span');
     rang.className = 'podium__rang';
@@ -333,98 +337,10 @@ function rendrePodium(soiree) {
     nom.textContent = joueur.nom;
     const points = document.createElement('span');
     points.className = 'podium__points';
-    points.textContent = `${joueur.score} pt${joueur.score > 1 ? 's' : ''}`;
+    points.textContent = `${joueur.score} ${pluriel(joueur.score, 'pt')}`;
     li.append(rang, nom, points);
     podium.append(li);
   });
-}
-
-/* ------------------------------------------------------------------ */
-/* Actions du salon                                                    */
-/* ------------------------------------------------------------------ */
-
-async function ajouterJoueur(nom) {
-  try {
-    const { soiree } = await api.ajouterJoueur(etat.soiree.code, nom);
-    appliquerSoiree(soiree, { forcer: true });
-    $('champ-joueur').value = '';
-    $('champ-joueur').focus();
-  } catch (erreur) {
-    signalerErreur(erreur);
-  }
-}
-
-async function retirerJoueur(id) {
-  try {
-    const { soiree } = await api.retirerJoueur(etat.soiree.code, id);
-    appliquerSoiree(soiree, { forcer: true });
-  } catch (erreur) {
-    signalerErreur(erreur);
-  }
-}
-
-async function ajouterCarte(texte) {
-  try {
-    const { soiree } = await api.ajouterCarte(etat.soiree.code, etat.categorieActive, texte);
-    appliquerSoiree(soiree, { forcer: true });
-    $('champ-carte').value = '';
-    $('champ-carte').focus();
-  } catch (erreur) {
-    signalerErreur(erreur);
-  }
-}
-
-async function retirerCarte(categorie, id) {
-  try {
-    const { soiree } = await api.retirerCarte(etat.soiree.code, categorie, id);
-    appliquerSoiree(soiree, { forcer: true });
-  } catch (erreur) {
-    signalerErreur(erreur);
-  }
-}
-
-async function changerDuree(duree) {
-  try {
-    const { soiree } = await api.majReglages(etat.soiree.code, { duree });
-    appliquerSoiree(soiree, { forcer: true });
-  } catch (erreur) {
-    signalerErreur(erreur);
-  }
-}
-
-async function reinitialiserScores() {
-  if (!window.confirm('Remettre tous les scores de la soirée à zéro ?')) return;
-  try {
-    const { soiree } = await api.reinitialiser(etat.soiree.code);
-    appliquerSoiree(soiree, { forcer: true });
-    afficherMessage($('info-salon'), 'Scores remis à zéro.', 4000);
-  } catch (erreur) {
-    signalerErreur(erreur);
-  }
-}
-
-async function cloturerSoiree() {
-  const message =
-    'Clôturer la soirée ? Joueurs, scores et cartes ajoutées seront effacés immédiatement et définitivement.';
-  if (!window.confirm(message)) return;
-  try {
-    await api.cloturerSoiree(etat.soiree.code);
-  } catch {
-    // La soirée avait déjà expiré : le résultat est le même.
-  }
-  quitterSoiree();
-  afficherMessage($('erreur-depart'), '', 0);
-  afficherMessage($('info-salon'), '', 0);
-}
-
-async function copierCode() {
-  const lien = `${window.location.origin}${window.location.pathname}#${etat.soiree.code}`;
-  try {
-    await navigator.clipboard.writeText(lien);
-    afficherMessage($('info-salon'), 'Lien de la soirée copié !', 4000);
-  } catch {
-    afficherMessage($('info-salon'), `Partage ce lien : ${lien}`, 8000);
-  }
 }
 
 /* ------------------------------------------------------------------ */
@@ -433,8 +349,7 @@ async function copierCode() {
 
 async function lancerManche() {
   const soiree = etat.soiree;
-  const joueurId = $('choix-joueur').value;
-  const joueur = soiree?.joueurs.find((j) => j.id === joueurId);
+  const joueur = soiree?.joueurs.find((j) => j.id === $('choix-joueur').value);
   if (!joueur) {
     afficherMessage($('erreur-salon'), 'Choisis le joueur qui prend le téléphone.', 5000);
     return;
@@ -442,7 +357,7 @@ async function lancerManche() {
 
   let tirage;
   try {
-    ({ tirage } = await api.tirer(soiree.code, CARTES_PAR_MANCHE));
+    tirage = tirerCombinaisons(soiree, CARTES_PAR_MANCHE);
   } catch (erreur) {
     signalerErreur(erreur);
     return;
@@ -456,6 +371,7 @@ async function lancerManche() {
     resultats: [],
     finLe: 0,
     intervalle: null,
+    decompte: null,
     verrouillage: null,
     inclinaisonPropre: null,
     terminee: false
@@ -465,10 +381,10 @@ async function lancerManche() {
   $('tour-joueur').textContent = joueur.nom;
   $('tour-chrono').textContent = String(soiree.reglages.duree);
   await garderEcranAllume();
-  decompte();
+  demarrerDecompte();
 }
 
-function decompte() {
+function demarrerDecompte() {
   const manche = etat.manche;
   $('ecran-tour').className = 'plein-ecran plein-ecran--pret';
   $('bloc-decompte').hidden = false;
@@ -480,21 +396,20 @@ function decompte() {
 
   let reste = 3;
   $('decompte-nombre').textContent = String(reste);
-  const tic = window.setInterval(() => {
-    reste -= 1;
+  manche.decompte = window.setInterval(() => {
     if (!etat.manche || etat.manche.terminee) {
-      window.clearInterval(tic);
+      window.clearInterval(manche.decompte);
       return;
     }
+    reste -= 1;
     if (reste <= 0) {
-      window.clearInterval(tic);
+      window.clearInterval(manche.decompte);
       demarrerChrono();
       return;
     }
     $('decompte-nombre').textContent = String(reste);
     vibrer(40);
   }, 1000);
-  manche.decompte = tic;
 }
 
 function demarrerChrono() {
@@ -548,8 +463,7 @@ function repondre(resultat) {
 
   vibrer(resultat === 'trouve' ? [30, 40, 30] : 60);
 
-  $('ecran-tour').className =
-    `plein-ecran plein-ecran--${resultat === 'trouve' ? 'trouve' : 'passe'}`;
+  $('ecran-tour').className = `plein-ecran plein-ecran--${resultat === 'trouve' ? 'trouve' : 'passe'}`;
   $('bloc-combinaison').hidden = true;
   const verdict = $('bloc-verdict');
   verdict.hidden = false;
@@ -586,19 +500,22 @@ function terminerManche({ abandon = false } = {}) {
 
   const trouvees = manche.resultats.filter((r) => r.resultat === 'trouve').length;
   const passees = manche.resultats.length - trouvees;
-  afficherRecap(manche, trouvees, passees);
 
-  api
-    .enregistrerManche(etat.soiree.code, { joueurId: manche.joueur.id, trouvees, passees })
-    .then(({ soiree }) => appliquerSoiree(soiree, { forcer: true }))
-    .catch((erreur) => signalerErreur(erreur));
+  try {
+    enregistrerManche(etat.soiree, { joueurId: manche.joueur.id, trouvees, passees });
+    majSoiree();
+  } catch (erreur) {
+    signalerErreur(erreur);
+  }
+
+  afficherRecap(manche, trouvees, passees);
 }
 
 function afficherRecap(manche, trouvees, passees) {
   $('recap-joueur').textContent = manche.joueur.nom;
-  $('recap-score').textContent = `${trouvees} pt${trouvees > 1 ? 's' : ''}`;
+  $('recap-score').textContent = `${trouvees} ${pluriel(trouvees, 'pt')}`;
   $('recap-detail').textContent =
-    `${trouvees} trouvée${trouvees > 1 ? 's' : ''} · ${passees} passée${passees > 1 ? 's' : ''}`;
+    `${trouvees} ${pluriel(trouvees, 'trouvée')} · ${passees} ${pluriel(passees, 'passée')}`;
 
   const liste = $('recap-liste');
   liste.textContent = '';
@@ -609,10 +526,9 @@ function afficherRecap(manche, trouvees, passees) {
     marque.className = 'liste-recap__marque';
     marque.textContent = ligne.resultat === 'trouve' ? '✓' : '↷';
     const texte = document.createElement('span');
-    texte.textContent = [
-      ligne.personnage ? `Je suis ${ligne.personnage}` : '',
-      ligne.action
-    ].filter(Boolean).join(' et ');
+    texte.textContent = [ligne.personnage ? `Je suis ${ligne.personnage}` : '', ligne.action]
+      .filter(Boolean)
+      .join(' et ');
     li.append(marque, texte);
     liste.append(li);
   }
@@ -624,8 +540,8 @@ function afficherRecap(manche, trouvees, passees) {
   }
 
   montrerEcran('recap');
-  // Le détail de la manche n'est jamais transmis ni conservé : il disparaît
-  // de la page dès qu'on revient au salon.
+  // Le détail carte par carte n'est ni enregistré ni transporté dans le lien :
+  // il disparaît dès le retour au salon.
 }
 
 /* ------------------------------------------------------------------ */
@@ -658,8 +574,8 @@ function libererEcran() {
 }
 
 // Incliner le téléphone vers le bas = trouvé, vers le haut = passe.
-// Disponible seulement si le navigateur donne l'orientation sans permission
-// explicite ; les deux boutons restent de toute façon la commande principale.
+// Actif seulement si le navigateur donne l'orientation sans demander de
+// permission ; les deux boutons restent la commande principale.
 function activerInclinaison() {
   const manche = etat.manche;
   if (typeof window.DeviceOrientationEvent === 'undefined') return;
@@ -681,8 +597,7 @@ function activerInclinaison() {
   };
 
   window.addEventListener('deviceorientation', surOrientation);
-  manche.inclinaisonPropre = () =>
-    window.removeEventListener('deviceorientation', surOrientation);
+  manche.inclinaisonPropre = () => window.removeEventListener('deviceorientation', surOrientation);
 }
 
 /* ------------------------------------------------------------------ */
@@ -692,33 +607,45 @@ function activerInclinaison() {
 function brancherEvenements() {
   $('form-creer').addEventListener('submit', (e) => {
     e.preventDefault();
-    creerSoiree($('champ-nom-soiree').value.trim());
+    ouvrirSoiree($('champ-nom-soiree').value.trim());
   });
 
-  $('form-rejoindre').addEventListener('submit', (e) => {
+  $('form-reprendre').addEventListener('submit', (e) => {
     e.preventDefault();
-    const code = $('champ-code').value.trim().toUpperCase();
-    if (!/^[A-Z0-9]{3,8}$/.test(code)) {
-      afficherMessage($('erreur-depart'), 'Le code doit contenir 5 lettres ou chiffres.', 5000);
+    const lien = $('champ-lien').value.trim();
+    if (!lien) {
+      afficherMessage($('erreur-depart'), 'Colle le lien reçu pour reprendre la soirée.', 5000);
       return;
     }
-    rejoindre(code).catch(() => {});
-  });
-
-  $('champ-code').addEventListener('input', (e) => {
-    e.target.value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+    reprendre(lien);
   });
 
   $('form-joueur').addEventListener('submit', (e) => {
     e.preventDefault();
     const nom = $('champ-joueur').value.trim();
-    if (nom) ajouterJoueur(nom);
+    if (!nom) return;
+    try {
+      ajouterJoueur(etat.soiree, nom);
+      majSoiree();
+      $('champ-joueur').value = '';
+      $('champ-joueur').focus();
+    } catch (erreur) {
+      signalerErreur(erreur);
+    }
   });
 
   $('form-carte').addEventListener('submit', (e) => {
     e.preventDefault();
     const texte = $('champ-carte').value.trim();
-    if (texte) ajouterCarte(texte);
+    if (!texte) return;
+    try {
+      ajouterCarte(etat.soiree, etat.categorieActive, texte);
+      majSoiree();
+      $('champ-carte').value = '';
+      $('champ-carte').focus();
+    } catch (erreur) {
+      signalerErreur(erreur);
+    }
   });
 
   for (const onglet of document.querySelectorAll('.onglet')) {
@@ -729,9 +656,15 @@ function brancherEvenements() {
     });
   }
 
-  $('btn-copier-code').addEventListener('click', copierCode);
-  $('btn-reinitialiser').addEventListener('click', reinitialiserScores);
+  $('btn-transferer').addEventListener('click', transferer);
   $('btn-cloturer').addEventListener('click', cloturerSoiree);
+  $('btn-reinitialiser').addEventListener('click', () => {
+    if (!window.confirm('Remettre tous les scores de la soirée à zéro ?')) return;
+    reinitialiserScores(etat.soiree);
+    majSoiree();
+    afficherMessage($('info-salon'), 'Scores remis à zéro.', 4000);
+  });
+
   $('btn-lancer').addEventListener('click', lancerManche);
   $('btn-retour-salon').addEventListener('click', () => {
     etat.manche = null;
@@ -755,19 +688,16 @@ function brancherEvenements() {
     }
   });
 
+  // Un lien collé dans la barre d'adresse pendant que la page est ouverte.
   window.addEventListener('hashchange', () => {
-    const code = codeDepuisUrl();
-    if (!code) {
-      if (etat.soiree) quitterSoiree();
-      return;
-    }
-    if (!etat.soiree || etat.soiree.code !== code) rejoindre(code).catch(() => {});
+    const fragment = window.location.hash.slice(1);
+    if (!fragment) return;
+    if (etat.soiree && fragment === versFragment(etat.soiree)) return;
+    reprendre(fragment, { silencieux: true });
   });
 
-  window.addEventListener('pagehide', () => {
-    arreterSondage();
-    libererEcran();
-  });
+  window.addEventListener('pagehide', libererEcran);
 }
 
 initialiser();
+window.__jeuPret = true; // repère pour l'alerte « page ouverte en file:// »
