@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Ta mère en slip — Jeux</title>
+  <meta name="description" content="À 2 ou jusqu'à 12, retourne le smartphone face aux autres et devine ta combinaison de cartes en premier. Chrono réglable, cartes à l'infini, aucune donnée conservée.">
+  <meta name="theme-color" content="#0b0917">
+  <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/assets/css/base.css">
+  <link rel="stylesheet" href="/assets/css/jeu.css">
+</head>
+<body>
+  <a class="lien-evitement" href="#contenu">Aller au contenu</a>
+
+  <header class="entete">
+    <div class="conteneur entete__interieur">
+      <a class="marque" href="/">
+        <span class="marque__pastille" aria-hidden="true">🎲</span>
+        <span>Jeux</span>
+      </a>
+      <nav class="entete__nav" aria-label="Navigation principale">
+        <a class="entete__lien" href="/#catalogue">Catalogue</a>
+        <a class="entete__lien" href="/#confidentialite">Vos données</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="contenu" class="conteneur jeu-page">
+
+    <!-- ÉCRAN 1 : présentation + créer / rejoindre une soirée -->
+    <section class="ecran" id="ecran-depart" aria-labelledby="titre-jeu">
+      <div class="presentation">
+        <div>
+          <p class="etiquette">2 à 12 joueurs · Chrono réglable</p>
+          <h1 id="titre-jeu">Ta mère en slip</h1>
+          <p class="presentation__accroche">
+            Éclate-toi avec tes potes ou en famille ! À 2 ou jusqu'à 12, retourne le
+            smartphone face aux autres et devine ta combinaison de cartes en premier.
+          </p>
+          <ul class="presentation__exemples">
+            <li>Suis-je un homme ?</li>
+            <li>Un chanteur ?</li>
+            <li>J'allume le feu ?</li>
+            <li>Je suis chez l'esthéticienne ?</li>
+          </ul>
+          <p class="presentation__accroche" style="margin-top: 18px;">
+            Les combinaisons sont folles, et vous pouvez ajouter autant de personnages et
+            d'actions que vous voulez.
+          </p>
+        </div>
+
+        <div class="panneau">
+          <h2 style="font-size: 1.2rem;">Les améliorations</h2>
+          <p class="note" style="margin-bottom: 16px;">Pour les connaisseurs du jeu de société :</p>
+          <ul class="ameliorations">
+            <li>Jusqu'à 12 joueurs</li>
+            <li>3 fois plus de cartes (<span id="compte-cartes">plus de 200 cartes</span>)</li>
+            <li>Possibilité d'ajouter des cartes à l'infini</li>
+            <li>Choix de la durée du chrono</li>
+            <li>Ça tient dans la poche</li>
+          </ul>
+        </div>
+      </div>
+
+      <p class="message message--erreur" id="erreur-depart" role="alert" hidden></p>
+
+      <div class="depart">
+        <div class="panneau">
+          <h2>Nouvelle soirée</h2>
+          <p>
+            Crée une soirée pour ce soir : tu reçois un code à partager avec le groupe.
+            Les joueurs, les scores et vos cartes maison vivent uniquement pendant cette soirée.
+          </p>
+          <form id="form-creer" novalidate>
+            <label class="champ">
+              <span class="champ__libelle">Nom de la soirée (facultatif)</span>
+              <input type="text" id="champ-nom-soiree" name="nom" maxlength="24" placeholder="Samedi chez Léa" autocomplete="off">
+            </label>
+            <button class="bouton bouton--large" type="submit">Créer la soirée</button>
+          </form>
+        </div>
+
+        <div class="panneau">
+          <h2>Rejoindre une soirée</h2>
+          <p>
+            Quelqu'un a déjà lancé la soirée ? Saisis son code à 5 caractères pour
+            retrouver le même groupe, les mêmes réglages et le même paquet.
+          </p>
+          <form id="form-rejoindre" novalidate>
+            <label class="champ">
+              <span class="champ__libelle">Code de la soirée</span>
+              <input type="text" id="champ-code" name="code" maxlength="5" inputmode="latin" autocapitalize="characters" autocomplete="off" spellcheck="false" placeholder="ABC23" aria-describedby="aide-code">
+              <span class="champ__aide" id="aide-code">5 lettres ou chiffres, sans espace.</span>
+            </label>
+            <button class="bouton bouton--violet bouton--large" type="submit">Rejoindre</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- ÉCRAN 2 : salon de la soirée -->
+    <section class="ecran" id="ecran-salon" aria-labelledby="titre-salon" hidden>
+      <div class="salon__entete">
+        <div>
+          <h1 id="titre-salon" style="font-size: clamp(1.7rem, 4vw, 2.4rem);">
+            <span id="nom-soiree">Soirée</span>
+          </h1>
+          <p class="note" id="info-expiration">Cette soirée s'efface toute seule après 3 h sans activité.</p>
+        </div>
+        <div class="code-soiree">
+          <div>
+            <span class="code-soiree__libelle">Code</span>
+            <span class="code-soiree__valeur" id="valeur-code">—</span>
+          </div>
+          <button class="bouton bouton--fantome bouton--petit" type="button" id="btn-copier-code">Copier</button>
+        </div>
+      </div>
+
+      <p class="message message--erreur" id="erreur-salon" role="alert" hidden></p>
+      <p class="message message--ok" id="info-salon" role="status" hidden></p>
+
+      <div class="grille-salon">
+        <div class="colonne">
+          <div class="panneau">
+            <div class="bloc__titre">
+              <h2>Joueurs</h2>
+              <span class="bloc__compteur" id="compteur-joueurs">0 / 12</span>
+            </div>
+            <ul class="liste-joueurs" id="liste-joueurs"></ul>
+            <p class="note" id="note-joueurs" hidden>Ajoute au moins 2 joueurs pour lancer une manche.</p>
+            <form id="form-joueur" class="ligne-formulaire" novalidate>
+              <input type="text" id="champ-joueur" maxlength="24" placeholder="Prénom du joueur" aria-label="Prénom du joueur" autocomplete="off">
+              <button class="bouton bouton--petit" type="submit">Ajouter</button>
+            </form>
+          </div>
+
+          <div class="panneau">
+            <div class="bloc__titre">
+              <h2>Cartes de la soirée</h2>
+              <span class="bloc__compteur" id="compteur-cartes">0 carte ajoutée</span>
+            </div>
+            <p class="note" style="margin-bottom: 14px;">
+              Complète le paquet avec vos personnages et vos actions maison. Ces cartes
+              ne servent qu'à cette soirée et disparaissent avec elle.
+            </p>
+            <div class="onglets" role="tablist" aria-label="Catégorie de cartes">
+              <button class="onglet" type="button" role="tab" id="onglet-personnages" aria-selected="true" data-categorie="personnages">Personnages</button>
+              <button class="onglet" type="button" role="tab" id="onglet-actions" aria-selected="false" data-categorie="actions">Actions</button>
+            </div>
+            <form id="form-carte" class="ligne-formulaire" novalidate>
+              <input type="text" id="champ-carte" maxlength="80" placeholder="un pilote de rallye" aria-label="Texte de la carte" autocomplete="off">
+              <button class="bouton bouton--petit bouton--violet" type="submit">Ajouter la carte</button>
+            </form>
+            <p class="champ__aide" id="exemple-carte">Exemple de personnage : « une dompteuse de hamsters ».</p>
+            <ul class="liste-cartes" id="liste-cartes"></ul>
+          </div>
+        </div>
+
+        <div class="colonne">
+          <div class="panneau">
+            <div class="bloc__titre">
+              <h2>Réglages</h2>
+            </div>
+            <fieldset class="choix-duree" id="choix-duree">
+              <legend>Durée du chrono</legend>
+            </fieldset>
+            <p class="note" style="margin-top: 16px;">
+              Le paquet de base contient <strong id="detail-paquet">201 cartes</strong>,
+              soit des milliers de combinaisons possibles.
+            </p>
+          </div>
+
+          <div class="panneau">
+            <div class="bloc__titre">
+              <h2>Manche suivante</h2>
+            </div>
+            <label class="champ">
+              <span class="champ__libelle">Qui prend le téléphone ?</span>
+              <select id="choix-joueur" aria-describedby="aide-joueur"></select>
+              <span class="champ__aide" id="aide-joueur">Le téléphone se tient face aux autres : tu ne vois pas ta combinaison.</span>
+            </label>
+            <button class="bouton bouton--large" type="button" id="btn-lancer">Lancer la manche</button>
+          </div>
+
+          <div class="panneau">
+            <div class="bloc__titre">
+              <h2>Classement</h2>
+              <span class="bloc__compteur" id="compteur-manches">0 manche</span>
+            </div>
+            <ul class="podium" id="podium"></ul>
+            <div class="actions-pied" style="margin-top: 0;">
+              <button class="bouton bouton--fantome bouton--petit" type="button" id="btn-reinitialiser">Remettre les scores à zéro</button>
+              <button class="bouton bouton--danger bouton--petit" type="button" id="btn-cloturer">Clôturer la soirée</button>
+            </div>
+            <p class="note" style="margin-top: 14px;">
+              Clôturer efface immédiatement joueurs, scores et cartes ajoutées. Rien n'est
+              conservé après la soirée.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ÉCRAN 4 : récapitulatif de manche -->
+    <section class="ecran" id="ecran-recap" aria-labelledby="titre-recap" hidden>
+      <div class="panneau" style="max-width: 620px; margin-inline: auto; text-align: center;">
+        <p class="etiquette">Manche terminée</p>
+        <h1 id="titre-recap" style="font-size: clamp(1.6rem, 4vw, 2.2rem);">
+          <span id="recap-joueur">Joueur</span>
+        </h1>
+        <p class="recap__score" id="recap-score">0</p>
+        <p class="note" id="recap-detail">0 trouvée · 0 passée</p>
+        <ul class="liste-recap" id="recap-liste"></ul>
+        <div class="actions-pied" style="justify-content: center;">
+          <button class="bouton" type="button" id="btn-retour-salon">Joueur suivant</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ÉCRAN 3 : la manche, en plein écran -->
+  <div class="plein-ecran plein-ecran--pret" id="ecran-tour" role="dialog" aria-modal="true" aria-label="Manche en cours" hidden>
+    <div class="tour__entete">
+      <span class="tour__joueur" id="tour-joueur">Joueur</span>
+      <span class="chrono" id="tour-chrono" role="timer" aria-live="off">60</span>
+      <button class="icone-bouton" type="button" id="btn-quitter-tour" aria-label="Arrêter la manche">✕</button>
+    </div>
+
+    <div class="tour__centre">
+      <div class="decompte" id="bloc-decompte">
+        <p class="decompte__consigne" id="decompte-consigne">
+          Tiens le téléphone face aux autres, écran vers eux.
+        </p>
+        <p class="decompte__nombre" id="decompte-nombre" aria-live="assertive">3</p>
+      </div>
+
+      <div class="combinaison" id="bloc-combinaison" hidden aria-live="polite">
+        <p class="combinaison__partie" id="combi-personnage">—</p>
+        <p class="combinaison__liant">et</p>
+        <p class="combinaison__partie" id="combi-action">—</p>
+      </div>
+
+      <p class="tour__verdict" id="bloc-verdict" hidden></p>
+    </div>
+
+    <div class="tour__pied" id="bloc-actions-tour" hidden>
+      <button class="bouton-tour bouton-tour--passe" type="button" id="btn-passe">Passe</button>
+      <button class="bouton-tour bouton-tour--trouve" type="button" id="btn-trouve">Trouvé</button>
+    </div>
+  </div>
+
+  <footer class="pied">
+    <div class="conteneur pied__interieur">
+      <p><a href="/">← Retour au catalogue</a></p>
+      <p>Aucune donnée de partie n'est enregistrée.</p>
+    </div>
+  </footer>
+
+  <script src="/assets/js/api.js" type="module"></script>
+  <script src="/assets/js/ta-mere-en-slip.js" type="module"></script>
+</body>
+</html>

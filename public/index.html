@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Jeux — le catalogue de jeux à sortir en soirée</title>
+  <meta name="description" content="Catalogue de jeux en ligne à jouer entre amis ou en famille. Une soirée, un code, aucune donnée conservée. Premier jeu disponible : Ta mère en slip.">
+  <meta name="theme-color" content="#0b0917">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Jeux — le catalogue de jeux à sortir en soirée">
+  <meta property="og:description" content="Crée une soirée, partage le code, jouez. Rien n'est sauvegardé.">
+  <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/assets/css/base.css">
+  <link rel="stylesheet" href="/assets/css/accueil.css">
+</head>
+<body>
+  <a class="lien-evitement" href="#contenu">Aller au contenu</a>
+
+  <header class="entete">
+    <div class="conteneur entete__interieur">
+      <a class="marque" href="/">
+        <span class="marque__pastille" aria-hidden="true">🎲</span>
+        <span>Jeux</span>
+      </a>
+      <nav class="entete__nav" aria-label="Navigation principale">
+        <a class="entete__lien" href="#catalogue">Catalogue</a>
+        <a class="entete__lien" href="#comment-jouer">Comment jouer</a>
+        <a class="entete__lien" href="#confidentialite">Vos données</a>
+        <a class="bouton bouton--petit" href="/jeux/ta-mere-en-slip/">Lancer une soirée</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="contenu">
+    <section class="heros">
+      <div class="conteneur heros__grille">
+        <div>
+          <p class="etiquette">Jeux d'ambiance · 2 à 12 joueurs</p>
+          <h1 class="heros__titre">Le catalogue des jeux qui <span>animent vos soirées</span></h1>
+          <p class="heros__accroche">
+            Un téléphone, une bande de potes ou la famille au complet, et c'est parti.
+            Chaque soirée a son propre code : vous jouez à plusieurs, chacun son tour,
+            sans installation et sans compte.
+          </p>
+          <div class="heros__actions">
+            <a class="bouton" href="/jeux/ta-mere-en-slip/">Jouer à Ta mère en slip</a>
+            <a class="bouton bouton--fantome" href="#catalogue">Voir le catalogue</a>
+          </div>
+          <ul class="heros__points">
+            <li>Aucune inscription</li>
+            <li>Aucune donnée de partie conservée</li>
+            <li>Ça tient dans la poche</li>
+          </ul>
+        </div>
+
+        <div class="pile" aria-hidden="true">
+          <div class="pile__carte pile__carte--1"><span>Personnage</span><strong>Je suis une sirène</strong></div>
+          <div class="pile__carte pile__carte--2"><span>Action</span><strong>J'allume le feu</strong></div>
+          <div class="pile__carte pile__carte--3"><span>Ta combinaison</span><strong>Je suis un chanteur d'opéra et je passe l'aspirateur</strong></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="catalogue" aria-labelledby="titre-catalogue">
+      <div class="conteneur">
+        <div class="section__entete">
+          <h2 id="titre-catalogue">Le catalogue</h2>
+          <p>Des jeux pensés pour être sortis en cinq secondes, autour d'une table ou dans un canapé.</p>
+        </div>
+
+        <ul class="catalogue">
+          <li class="jeu jeu--dispo">
+            <div class="jeu__visuel">Ta mère en slip</div>
+            <div class="jeu__corps">
+              <p class="etiquette etiquette--dispo">Disponible</p>
+              <h3 class="jeu__titre"><a href="/jeux/ta-mere-en-slip/">Ta mère en slip</a></h3>
+              <p class="jeu__resume">
+                Retourne le smartphone face aux autres et devine ta combinaison de cartes
+                en premier. Suis-je un homme ? Un chanteur ? J'allume le feu ?
+              </p>
+              <ul class="jeu__meta">
+                <li>2 à 12 joueurs</li>
+                <li>Chrono réglable</li>
+                <li>Cartes à l'infini</li>
+              </ul>
+            </div>
+          </li>
+
+          <li class="jeu jeu--bientot">
+            <div class="jeu__visuel jeu__visuel--violet">Qui a dit ça&nbsp;?</div>
+            <div class="jeu__corps">
+              <p class="etiquette etiquette--bientot">Bientôt</p>
+              <h3 class="jeu__titre">Qui a dit ça ?</h3>
+              <p class="jeu__resume">
+                Chacun répond anonymement à une question, et le groupe doit deviner qui
+                se cache derrière chaque réponse.
+              </p>
+              <ul class="jeu__meta">
+                <li>3 à 12 joueurs</li>
+                <li>En préparation</li>
+              </ul>
+            </div>
+          </li>
+
+          <li class="jeu jeu--bientot">
+            <div class="jeu__visuel jeu__visuel--nuit">Le mot piégé</div>
+            <div class="jeu__corps">
+              <p class="etiquette etiquette--bientot">Bientôt</p>
+              <h3 class="jeu__titre">Le mot piégé</h3>
+              <p class="jeu__resume">
+                Tout le monde reçoit le même mot… sauf un imposteur. Discutez, votez,
+                démasquez.
+              </p>
+              <ul class="jeu__meta">
+                <li>4 à 12 joueurs</li>
+                <li>En préparation</li>
+              </ul>
+            </div>
+          </li>
+
+          <li class="jeu jeu--bientot">
+            <div class="jeu__visuel jeu__visuel--vert">Mime ou rien</div>
+            <div class="jeu__corps">
+              <p class="etiquette etiquette--bientot">Bientôt</p>
+              <h3 class="jeu__titre">Mime ou rien</h3>
+              <p class="jeu__resume">
+                Deux équipes, un chrono, et des mimes de plus en plus improbables à faire
+                deviner.
+              </p>
+              <ul class="jeu__meta">
+                <li>4 à 12 joueurs</li>
+                <li>En préparation</li>
+              </ul>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section" id="comment-jouer" aria-labelledby="titre-comment">
+      <div class="conteneur">
+        <div class="section__entete">
+          <h2 id="titre-comment">Comment ça marche</h2>
+          <p>Chaque soirée est indépendante : deux groupes à l'autre bout du monde peuvent jouer en même temps sans jamais se croiser.</p>
+        </div>
+        <ol class="etapes">
+          <li class="etape">
+            <h3>Crée ta soirée</h3>
+            <p>Un clic et tu obtiens un code à 5 caractères. C'est l'adresse de votre partie, valable le temps de la soirée.</p>
+          </li>
+          <li class="etape">
+            <h3>Partage le code</h3>
+            <p>Les autres rejoignent depuis leur téléphone avec le même code. Ajoutez les joueurs, réglez le chrono, complétez le paquet.</p>
+          </li>
+          <li class="etape">
+            <h3>Jouez, puis oubliez</h3>
+            <p>À la fin, tu clôtures la soirée : joueurs, scores et cartes ajoutées sont effacés immédiatement.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="section" id="confidentialite" aria-labelledby="titre-confidentialite">
+      <div class="conteneur">
+        <div class="confidentialite">
+          <div>
+            <p class="etiquette etiquette--dispo">Zéro sauvegarde</p>
+            <h2 id="titre-confidentialite">Ce qui se passe en soirée reste en soirée</h2>
+            <p>
+              Les données d'une partie ne sont jamais enregistrées. Elles vivent dans la
+              mémoire du serveur le temps de la soirée, puis disparaissent. Pas de base de
+              données, pas d'historique, pas de compte.
+            </p>
+          </div>
+          <ul>
+            <li>Aucun compte, aucun e-mail, aucun mot de passe.</li>
+            <li>Prénoms, scores et cartes ajoutées existent uniquement pendant la soirée.</li>
+            <li>Tout est effacé à la clôture, ou automatiquement après 3 heures d'inactivité.</li>
+            <li>Rien n'est écrit sur disque : un redémarrage du serveur efface tout.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="pied">
+    <div class="conteneur pied__interieur">
+      <p>Jeux — des jeux d'ambiance à jouer ensemble, en famille ou entre amis.</p>
+      <p>
+        <a href="#catalogue">Catalogue</a> ·
+        <a href="#comment-jouer">Comment jouer</a> ·
+        <a href="#confidentialite">Vos données</a> ·
+        <a href="/jeux/ta-mere-en-slip/">Ta mère en slip</a>
+      </p>
+    </div>
+  </footer>
+</body>
+</html>

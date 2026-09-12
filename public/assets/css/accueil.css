@@ -1,0 +1,308 @@
+/* Page d'accueil : vitrine du catalogue. */
+
+.heros {
+  padding-block: clamp(48px, 8vw, 92px) clamp(36px, 6vw, 64px);
+}
+.heros__grille {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  gap: clamp(28px, 5vw, 56px);
+  align-items: center;
+}
+.heros__titre {
+  margin-bottom: 18px;
+}
+.heros__titre span {
+  background-image: var(--degrade-marque);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.heros__accroche {
+  max-width: 52ch;
+  font-size: clamp(1.02rem, 2vw, 1.2rem);
+  color: var(--texte-doux);
+}
+.heros__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 28px;
+}
+.heros__points {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 22px;
+  margin: 26px 0 0;
+  padding: 0;
+  list-style: none;
+  color: var(--texte-doux);
+  font-size: 0.95rem;
+}
+.heros__points li {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.heros__points li::before {
+  content: "";
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background-image: var(--degrade-chaud);
+}
+
+/* Empilement de cartes décoratif */
+.pile {
+  position: relative;
+  aspect-ratio: 4 / 3.4;
+  min-height: 300px;
+  overflow: hidden; /* les cartes décoratives ne débordent jamais de la page */
+}
+.pile__carte {
+  position: absolute;
+  inset: 16% 20%;
+  display: grid;
+  place-content: center;
+  gap: 8px;
+  padding: 26px;
+  border-radius: var(--rayon-xl);
+  border: 1px solid var(--bordure-forte);
+  box-shadow: var(--ombre-forte);
+  text-align: center;
+  font-weight: 900;
+  letter-spacing: -0.01em;
+}
+.pile__carte span {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  opacity: 0.72;
+}
+.pile__carte strong {
+  font-size: clamp(1.3rem, 3vw, 1.9rem);
+  line-height: 1.15;
+}
+.pile__carte--1 {
+  transform: rotate(-8deg) translate(-18%, 4%);
+  background-image: linear-gradient(145deg, #2a1d5e, #150f33);
+  color: var(--texte-doux);
+}
+.pile__carte--2 {
+  transform: rotate(6deg) translate(18%, -4%);
+  background-image: linear-gradient(145deg, #3a1150, #1a0b32);
+  color: var(--rose-clair);
+}
+.pile__carte--3 {
+  transform: rotate(-2deg);
+  background-image: var(--degrade-chaud);
+  color: #21091a;
+  border-color: rgba(255, 255, 255, 0.5);
+}
+.pile__carte--3 span { opacity: 0.66; }
+
+/* Catalogue */
+.section {
+  padding-block: clamp(40px, 6vw, 72px);
+}
+.section__entete {
+  max-width: 62ch;
+  margin-bottom: 32px;
+}
+.section__entete p {
+  color: var(--texte-doux);
+}
+
+.catalogue {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(248px, 1fr));
+  gap: 24px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.jeu {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  border-radius: var(--rayon-l);
+  border: 1px solid var(--bordure);
+  background: var(--carte);
+  overflow: hidden;
+  transition: transform var(--transition), border-color var(--transition), box-shadow var(--transition);
+}
+.jeu--dispo:hover {
+  transform: translateY(-5px);
+  border-color: var(--bordure-forte);
+  box-shadow: var(--ombre-douce);
+}
+.jeu--bientot {
+  opacity: 0.74;
+}
+.jeu__visuel {
+  position: relative;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 16 / 9;
+  padding: 22px;
+  text-align: center;
+  font-weight: 900;
+  font-size: clamp(1.3rem, 3vw, 1.7rem);
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  color: #1a0716;
+  background-image: var(--degrade-chaud);
+}
+.jeu__visuel--violet {
+  background-image: linear-gradient(135deg, #8b5cf6, #22d3ee);
+  color: #08131a;
+}
+.jeu__visuel--nuit {
+  background-image: linear-gradient(135deg, #253a8a, #10204d);
+  color: #dfe7ff;
+}
+.jeu__visuel--vert {
+  background-image: linear-gradient(135deg, #b6f36b, #22d3ee);
+  color: #0a2013;
+}
+.jeu__corps {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+  padding: 22px 22px 24px;
+}
+.jeu__titre {
+  margin: 0;
+  font-size: 1.32rem;
+}
+.jeu__titre a {
+  color: var(--texte);
+  text-decoration: none;
+}
+.jeu__titre a::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+.jeu__titre a:hover { color: var(--rose-clair); }
+.jeu__resume {
+  margin: 0;
+  color: var(--texte-doux);
+  font-size: 0.97rem;
+}
+.jeu__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  margin-top: auto;
+  padding-top: 8px;
+}
+.jeu__meta li {
+  padding: 5px 11px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid var(--bordure);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--texte-doux);
+}
+
+/* Étapes */
+.etapes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin: 0;
+  padding: 0;
+  counter-reset: etape;
+  list-style: none;
+}
+.etape {
+  position: relative;
+  padding: 26px 24px 24px;
+  border-radius: var(--rayon-m);
+  border: 1px solid var(--bordure);
+  background: rgba(255, 255, 255, 0.04);
+}
+.etape::before {
+  counter-increment: etape;
+  content: counter(etape);
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  margin-bottom: 14px;
+  border-radius: 12px;
+  background-image: var(--degrade-marque);
+  color: #0b0917;
+  font-weight: 900;
+  font-size: 1.1rem;
+}
+.etape h3 { margin-bottom: 6px; }
+.etape p {
+  margin: 0;
+  color: var(--texte-doux);
+  font-size: 0.96rem;
+}
+
+/* Confidentialité */
+.confidentialite {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(24px, 4vw, 44px);
+  align-items: center;
+  border-radius: var(--rayon-l);
+  border: 1px solid rgba(182, 243, 107, 0.28);
+  background:
+    linear-gradient(140deg, rgba(182, 243, 107, 0.1), rgba(34, 211, 238, 0.06)),
+    var(--carte);
+  padding: clamp(24px, 4vw, 40px);
+}
+.confidentialite h2 { margin-bottom: 12px; }
+.confidentialite p { color: var(--texte-doux); }
+.confidentialite ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 12px;
+}
+.confidentialite li {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  font-size: 0.97rem;
+  color: var(--texte-doux);
+}
+.confidentialite li::before {
+  content: "✓";
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(182, 243, 107, 0.18);
+  color: var(--lime);
+  font-weight: 900;
+  font-size: 0.85rem;
+}
+
+@media (max-width: 880px) {
+  .heros__grille,
+  .confidentialite {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .pile {
+    min-height: 260px;
+    order: -1;
+  }
+}
