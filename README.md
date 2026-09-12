@@ -9,24 +9,19 @@ serveur, aucune étape de build. Il se publie tel quel sur GitHub Pages.
 
 ## Publier sur GitHub Pages
 
-Deux chemins, au choix — le site est à la racine du dépôt, donc les deux
-fonctionnent sans rien modifier.
+Le site est à la racine du dépôt et contient un fichier `.nojekyll` : GitHub
+Pages le sert tel quel, sans build, sans workflow et sans runner.
 
-**Le plus simple (aucun réglage de workflow)**
 1. *Settings* → *Pages*
 2. *Source* : **Deploy from a branch**
 3. Branche `main`, dossier **`/ (root)`**, puis *Save*
 
-**Avec GitHub Actions** (publie après avoir lancé les tests)
-1. *Settings* → *Pages*
-2. *Source* : **GitHub Actions**
+Chaque envoi sur `main` republie le site. Il est servi sur
+`https://<compte>.github.io/<dépôt>/`. Tous les chemins du site sont relatifs :
+il fonctionne aussi bien à la racine d'un domaine que dans un sous-dossier.
 
-Le workflow [`.github/workflows/pages.yml`](.github/workflows/pages.yml) fait le
-reste à chaque envoi sur `main`.
-
-Le site est ensuite servi sur `https://<compte>.github.io/<dépôt>/`. Tous les
-chemins du site sont relatifs : il fonctionne aussi bien à la racine d'un
-domaine que dans un sous-dossier.
+Il n'y a volontairement aucun workflow GitHub Actions : la publication n'en a
+pas besoin, et les tests se lancent en local avec `npm test` (voir plus bas).
 
 ## Principe : une soirée, un lien
 
@@ -142,7 +137,6 @@ assets/
   js/ta-mere-en-slip.js         interface et déroulé d'une manche
   img/favicon.svg
 tests/                          tests de la logique de soirée et des liens
-.github/workflows/pages.yml     publication sur GitHub Pages
 ```
 
 `soiree.js` et `lien.js` ne touchent pas au DOM : ils se testent directement
