@@ -3,40 +3,110 @@
 :root {
   color-scheme: dark;
 
-  --nuit: #0b0917;
-  --nuit-2: #14102a;
-  --nuit-3: #1d1740;
-  --carte: rgba(255, 255, 255, 0.05);
+  /* ------------------------------------------------------------------
+     L'ADN du site tient dans ce bloc. Tout le reste — catalogue, jeux,
+     composants — n'utilise que ces jetons : changer l'identité visuelle
+     se fait ici, et se propage partout, y compris aux jeux à venir.
+     ------------------------------------------------------------------ */
+
+  /* Fonds */
+  --fond: #0b0917;
+  --fond-2: #14102a;
+  --fond-voile: color-mix(in srgb, var(--fond) 78%, transparent);
+  --fond-3: #1d1740;
+
+  /* Surfaces posées sur le fond */
+  --surface: rgba(255, 255, 255, 0.05);
+  --surface-2: rgba(255, 255, 255, 0.065);
+  --surface-forte: rgba(255, 255, 255, 0.1);
+  --champ: rgba(8, 6, 20, 0.7);
+  --champ-actif: rgba(8, 6, 20, 0.9);
+
+  /* Bordures */
   --bordure: rgba(255, 255, 255, 0.12);
   --bordure-forte: rgba(255, 255, 255, 0.28);
+  --bordure-vive: rgba(255, 255, 255, 0.5);
 
+  /* Texte */
   --texte: #f6f3ff;
   --texte-doux: #b7b0d4;
   --texte-faible: #837ca6;
+  --texte-vif: #ffffff;
+  --sur-accent: #170a18; /* texte posé sur un aplat vif */
 
-  --rose: #ff2e88;
-  --rose-clair: #ff7ab3;
-  --violet: #8b5cf6;
-  --cyan: #22d3ee;
-  --lime: #b6f36b;
+  /* Accents */
+  --accent: #ff2e88;
+  --accent-clair: #ff7ab3;
+  --accent-2: #8b5cf6;
+  --accent-3: #22d3ee;
+  --succes: #b6f36b;
   --ambre: #ffb020;
-  --rouge: #ff5a5f;
+  --danger: #ff5a5f;
 
-  --degrade-marque: linear-gradient(135deg, #ff2e88 0%, #8b5cf6 55%, #22d3ee 100%);
-  --degrade-chaud: linear-gradient(135deg, #ff2e88 0%, #ffb020 100%);
+  /* Voiles teintés : dérivés des accents, ils suivent tout changement */
+  --voile-accent: color-mix(in srgb, var(--accent) 14%, transparent);
+  --voile-succes: color-mix(in srgb, var(--succes) 12%, transparent);
+  --voile-accent-3: color-mix(in srgb, var(--accent-3) 6%, transparent);
+  --voile-succes-bord: color-mix(in srgb, var(--succes) 42%, transparent);
+  --voile-ambre: color-mix(in srgb, var(--ambre) 12%, transparent);
+  --voile-ambre-bord: color-mix(in srgb, var(--ambre) 40%, transparent);
+  --voile-danger: color-mix(in srgb, var(--danger) 14%, transparent);
+  --voile-danger-fort: color-mix(in srgb, var(--danger) 26%, transparent);
+  --voile-danger-bord: color-mix(in srgb, var(--danger) 50%, transparent);
+  --danger-texte: color-mix(in srgb, var(--danger) 55%, var(--texte-vif));
 
+  /* Dégradés */
+  --degrade-marque: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 55%, var(--accent-3) 100%);
+  --degrade-chaud: linear-gradient(135deg, var(--accent) 0%, var(--ambre) 100%);
+  --degrade-froid: linear-gradient(135deg, var(--accent-2), var(--accent-3));
+  --degrade-succes: linear-gradient(135deg, var(--succes), var(--accent-3));
+  --degrade-passe: linear-gradient(135deg, var(--ambre), #ff7a45);
+  --degrade-nuit: linear-gradient(135deg, #253a8a, #10204d);
+  --degrade-carte-1: linear-gradient(145deg, #2a1d5e, #150f33);
+  --degrade-carte-2: linear-gradient(145deg, #3a1150, #1a0b32);
+
+  /* Ambiances plein écran d'une manche */
+  --ambiance-pret: linear-gradient(160deg, var(--fond-3), var(--fond));
+  --ambiance-trouve: linear-gradient(160deg, #1d5c2a, #0b2a14);
+  --ambiance-passe: linear-gradient(160deg, #6a3a12, #2a1607);
+
+  /* Halos du fond de page */
+  --halo-1: color-mix(in srgb, var(--accent) 22%, transparent);
+  --halo-2: color-mix(in srgb, var(--accent-2) 24%, transparent);
+  --halo-3: color-mix(in srgb, var(--accent-3) 14%, transparent);
+
+  /* Formes */
   --rayon-s: 10px;
   --rayon-m: 16px;
   --rayon-l: 26px;
   --rayon-xl: 34px;
-
   --ombre-douce: 0 18px 40px rgba(0, 0, 0, 0.45);
   --ombre-forte: 0 26px 70px rgba(0, 0, 0, 0.6);
+  --lueur-accent: 0 12px 28px color-mix(in srgb, var(--accent) 28%, transparent);
+  --lueur-froide: 0 12px 28px color-mix(in srgb, var(--accent-2) 30%, transparent);
 
-  --largeur: 1140px;
-  --transition: 180ms ease;
+  /* Mouvement */
+  --duree-courte: 140ms;
+  --duree: 180ms;
+  --duree-longue: 380ms;
+  --courbe: ease;
+  --courbe-sortie: cubic-bezier(0.22, 1, 0.36, 1);
+  --courbe-ressort: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --transition: var(--duree) var(--courbe);
 
+  /* Typographie */
   --police: "Trebuchet MS", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --police-titre: var(--police);
+  --txt-xs: 0.8rem;
+  --txt-s: 0.88rem;
+  --txt-m: 0.96rem;
+  --txt-l: 1.2rem;
+  --titre-s: 1.2rem;
+  --titre-m: clamp(1.6rem, 4vw, 2.2rem);
+  --titre-l: clamp(1.7rem, 4vw, 2.4rem);
+
+  /* Gabarit */
+  --largeur: 1140px;
 }
 
 *,
@@ -56,11 +126,11 @@ body {
   font-size: 17px;
   line-height: 1.6;
   color: var(--texte);
-  background-color: var(--nuit);
+  background-color: var(--fond);
   background-image:
-    radial-gradient(1000px 600px at 12% -10%, rgba(255, 46, 136, 0.22), transparent 60%),
-    radial-gradient(900px 620px at 92% 6%, rgba(139, 92, 246, 0.24), transparent 62%),
-    radial-gradient(760px 520px at 50% 108%, rgba(34, 211, 238, 0.14), transparent 65%);
+    radial-gradient(1000px 600px at 12% -10%, var(--halo-1), transparent 60%),
+    radial-gradient(900px 620px at 92% 6%, var(--halo-2), transparent 62%),
+    radial-gradient(760px 520px at 50% 108%, var(--halo-3), transparent 65%);
   background-attachment: fixed;
 }
 
@@ -79,7 +149,7 @@ p { margin: 0 0 1em; }
 p:last-child { margin-bottom: 0; }
 
 a {
-  color: var(--rose-clair);
+  color: var(--accent-clair);
   text-decoration-thickness: 2px;
   text-underline-offset: 3px;
 }
@@ -88,7 +158,7 @@ a:hover { color: var(--texte); }
 img, svg { max-width: 100%; }
 
 :focus-visible {
-  outline: 3px solid var(--cyan);
+  outline: 3px solid var(--accent-3);
   outline-offset: 3px;
   border-radius: 6px;
 }
@@ -106,8 +176,8 @@ img, svg { max-width: 100%; }
   top: 0;
   z-index: 100;
   padding: 12px 18px;
-  background: var(--rose);
-  color: #fff;
+  background: var(--accent);
+  color: var(--texte-vif);
   border-radius: 0 0 var(--rayon-s) 0;
   font-weight: 700;
 }
@@ -126,7 +196,7 @@ img, svg { max-width: 100%; }
   border: 0;
   border-radius: 999px;
   background-image: var(--fond);
-  color: #170a18;
+  color: var(--sur-accent);
   font: inherit;
   font-weight: 800;
   font-size: 1rem;
@@ -134,12 +204,12 @@ img, svg { max-width: 100%; }
   text-decoration: none;
   cursor: pointer;
   transition: transform var(--transition), box-shadow var(--transition), filter var(--transition);
-  box-shadow: 0 12px 28px rgba(255, 46, 136, 0.28);
+  box-shadow: 0 12px 28px var(--lueur-accent);
 }
 .bouton:hover {
   transform: translateY(-2px);
   filter: brightness(1.06);
-  color: #170a18;
+  color: var(--sur-accent);
 }
 .bouton:active { transform: translateY(0); }
 .bouton[disabled],
@@ -158,26 +228,26 @@ img, svg { max-width: 100%; }
   box-shadow: none;
 }
 .bouton--fantome:hover {
-  background-color: rgba(255, 255, 255, 0.08);
+  background-color: var(--surface-forte);
   color: var(--texte);
 }
 
 .bouton--violet {
-  --fond: linear-gradient(135deg, #8b5cf6, #22d3ee);
-  color: #0b0917;
-  box-shadow: 0 12px 28px rgba(139, 92, 246, 0.3);
+  --fond: var(--degrade-froid);
+  color: var(--sur-accent);
+  box-shadow: 0 12px 28px var(--lueur-froide);
 }
 
 .bouton--danger {
   background-image: none;
-  background-color: rgba(255, 90, 95, 0.14);
-  border: 2px solid rgba(255, 90, 95, 0.5);
-  color: #ffb3b5;
+  background-color: var(--voile-danger);
+  border: 2px solid var(--voile-danger-bord);
+  color: var(--danger-texte);
   box-shadow: none;
 }
 .bouton--danger:hover {
-  background-color: rgba(255, 90, 95, 0.24);
-  color: #fff;
+  background-color: var(--voile-danger-fort);
+  color: var(--texte-vif);
 }
 
 .bouton--large {
@@ -219,7 +289,7 @@ textarea {
   padding: 13px 16px;
   border-radius: var(--rayon-s);
   border: 2px solid var(--bordure);
-  background: rgba(8, 6, 20, 0.7);
+  background: var(--champ);
   color: var(--texte);
   font: inherit;
   transition: border-color var(--transition), background var(--transition);
@@ -229,14 +299,14 @@ textarea::placeholder { color: var(--texte-faible); }
 input:focus,
 select:focus,
 textarea:focus {
-  border-color: var(--rose);
+  border-color: var(--accent);
   outline: none;
-  background: rgba(8, 6, 20, 0.9);
+  background: var(--champ-actif);
 }
 
 /* --- Surfaces --- */
 .panneau {
-  background: var(--carte);
+  background: var(--surface);
   border: 1px solid var(--bordure);
   border-radius: var(--rayon-l);
   padding: clamp(20px, 3vw, 32px);
@@ -250,7 +320,7 @@ textarea:focus {
   padding: 6px 14px;
   border-radius: 999px;
   border: 1px solid var(--bordure);
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--surface-2);
   font-size: 0.78rem;
   font-weight: 800;
   letter-spacing: 0.1em;
@@ -258,13 +328,13 @@ textarea:focus {
   color: var(--texte-doux);
 }
 .etiquette--dispo {
-  border-color: rgba(182, 243, 107, 0.45);
-  background: rgba(182, 243, 107, 0.14);
-  color: var(--lime);
+  border-color: var(--voile-succes-bord);
+  background: var(--voile-succes);
+  color: var(--succes);
 }
 .etiquette--bientot {
-  border-color: rgba(255, 176, 32, 0.4);
-  background: rgba(255, 176, 32, 0.12);
+  border-color: var(--voile-ambre-bord);
+  background: var(--voile-ambre);
   color: var(--ambre);
 }
 
@@ -289,7 +359,7 @@ textarea:focus {
   top: 0;
   z-index: 20;
   backdrop-filter: blur(14px);
-  background: rgba(11, 9, 23, 0.78);
+  background: var(--fond-voile);
   border-bottom: 1px solid var(--bordure);
 }
 .entete__interieur {
@@ -333,7 +403,7 @@ textarea:focus {
   font-size: 0.95rem;
 }
 .entete__lien:hover {
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--surface-forte);
   color: var(--texte);
 }
 
