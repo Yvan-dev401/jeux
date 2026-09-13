@@ -67,6 +67,29 @@
         </div>
       </div>
 
+      <section class="regles-courtes" aria-labelledby="titre-regles-courtes">
+        <div class="regles-courtes__entete">
+          <h2 id="titre-regles-courtes" class="titre-panneau">Les règles en trente secondes</h2>
+          <button class="bouton bouton--fantome bouton--petit" type="button" data-ouvre-regles>
+            Toutes les règles
+          </button>
+        </div>
+        <ol class="regles-courtes__liste">
+          <li>
+            <h3>Retourne le téléphone</h3>
+            <p>À ton tour, tiens l'écran face aux autres. Ils voient ta combinaison — un personnage et une action — toi non.</p>
+          </li>
+          <li>
+            <h3>Pose des questions fermées</h3>
+            <p>« Suis-je un homme ? », « Je suis connu ? », « Est-ce que je fais ça chez moi ? » Les autres ne répondent que par oui ou non.</p>
+          </li>
+          <li>
+            <h3>Devine avant le chrono</h3>
+            <p>Trouve les deux cartes et appuie sur « J'ai trouvé ! ». Plus tu es rapide, plus tu marques de points.</p>
+          </li>
+        </ol>
+      </section>
+
       <p class="message message--erreur" id="erreur-depart" role="alert" hidden></p>
       <p class="message message--erreur" id="alerte-fichier" role="alert" hidden>
         Cette page est ouverte directement depuis un fichier, ce qui empêche le
@@ -130,6 +153,9 @@
           </div>
           <button class="bouton bouton--fantome bouton--petit" type="button" id="btn-transferer">
             Transférer
+          </button>
+          <button class="bouton bouton--fantome bouton--petit" type="button" data-ouvre-regles>
+            Règles
           </button>
         </div>
       </div>
@@ -268,6 +294,86 @@
       <button class="bouton-tour bouton-tour--trouve" type="button" id="btn-trouve">J'ai trouvé !</button>
     </div>
   </div>
+
+  <dialog class="regles" id="regles" aria-labelledby="titre-regles">
+    <div class="regles__entete">
+      <h2 id="titre-regles">Règles du jeu</h2>
+      <button class="icone-bouton" type="button" data-ferme-regles aria-label="Fermer les règles">✕</button>
+    </div>
+
+    <div class="regles__corps">
+      <section>
+        <h3>But du jeu</h3>
+        <p>
+          Deviner sa propre combinaison de cartes avant la fin du chrono. À la fin de
+          la soirée, le joueur qui a le plus de points gagne.
+        </p>
+      </section>
+
+      <section>
+        <h3>Mise en place</h3>
+        <p>
+          Ajoute les joueurs — de 2 à 12 — sur le téléphone qui servira de plateau.
+          Choisis la durée du chrono, et complète le paquet avec vos cartes maison si
+          vous en avez envie.
+        </p>
+      </section>
+
+      <section>
+        <h3>Une manche</h3>
+        <ol>
+          <li>Le joueur dont c'est le tour prend le téléphone et le retourne, écran face aux autres.</li>
+          <li>Une combinaison s'affiche : un personnage et une action. Toute la tablée la voit, sauf lui.</li>
+          <li>Il pose des questions fermées, celles auxquelles on ne peut répondre que par oui ou non.</li>
+          <li>Les autres répondent — et ne soufflent pas la réponse, c'est tout l'intérêt.</li>
+          <li>Dès qu'il a trouvé les deux cartes, il appuie sur « J'ai trouvé ! ». S'il cale, « Langue au chat » passe la main.</li>
+        </ol>
+      </section>
+
+      <section>
+        <h3>Les points</h3>
+        <p>
+          Une combinaison devinée rapporte <strong>autant de points qu'il reste de
+          secondes au chrono</strong> : trouver en 20 secondes sur un chrono de 60 en
+          vaut 40. Une combinaison manquée — langue au chat ou temps écoulé — n'en
+          rapporte aucun. Dans tous les cas, la réponse est révélée.
+        </p>
+      </section>
+
+      <section>
+        <h3>Pour répondre</h3>
+        <p>
+          Les deux boutons en bas de l'écran. Au clavier, la flèche droite vaut
+          « J'ai trouvé » et la flèche gauche « Langue au chat ». Sur les téléphones
+          qui le permettent, incliner l'appareil vers le bas vaut « trouvé », vers le
+          haut « langue au chat ».
+        </p>
+      </section>
+
+      <section>
+        <h3>Quelques conseils</h3>
+        <ul>
+          <li>Commence large : homme ou femme, métier, époque, lieu.</li>
+          <li>Sépare les deux cartes : cerne d'abord le personnage, puis l'action.</li>
+          <li>À deux, jouez l'un après l'autre : celui qui ne devine pas répond.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h3>D'où viennent les cartes</h3>
+        <p>
+          Le paquet de base compte 201 cartes — 101 personnages et 100 actions —
+          écrites pour cette version en ligne. Ce ne sont ni celles du jeu de société,
+          ni celles de l'application mobile. Les cartes que vous ajoutez pendant une
+          soirée s'y mélangent, et disparaissent avec elle.
+        </p>
+      </section>
+    </div>
+
+    <div class="regles__pied">
+      <button class="bouton bouton--large" type="button" data-ferme-regles>C'est parti</button>
+    </div>
+  </dialog>
 
   <footer class="pied">
     <div class="conteneur pied__interieur">

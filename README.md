@@ -62,6 +62,10 @@ le monde voit sa combinaison — un personnage et une action — sauf lui. Il po
 des questions fermées aux autres pour la deviner avant la fin du chrono. Une
 manche, c'est **une** combinaison : on ne les enchaîne pas.
 
+Les règles complètes sont dans le jeu : un résumé en trois étapes sur l'écran
+d'accueil, et le détail derrière le bouton **Règles**, accessible aussi depuis
+le salon une fois la soirée ouverte.
+
 Ce que la version en ligne apporte :
 
 - jusqu'à 12 joueurs ;
@@ -80,6 +84,15 @@ points qu'il restait de secondes au chrono**. Trouver en 20 s sur un chrono de
 60 s vaut donc 40 points. Une combinaison manquée — langue au chat ou temps
 écoulé — n'en rapporte aucun, et la réponse est révélée. Le classement de la
 soirée cumule ces points.
+
+## Le paquet de cartes
+
+Les 201 cartes de `assets/js/cartes.js` ont été **écrites pour cette version en
+ligne**, dans l'esprit du jeu et en registre tout public. Ce ne sont ni les
+cartes du jeu de société, ni celles de l'application mobile. Les modifier ou en
+ajouter se fait directement dans ce fichier, sous forme de deux listes de
+chaînes ; les joueurs peuvent par ailleurs en ajouter en cours de soirée, sans
+toucher au code.
 
 ## Développer en local
 

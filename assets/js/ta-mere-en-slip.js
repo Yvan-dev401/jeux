@@ -657,6 +657,19 @@ function brancherEvenements() {
     });
   }
 
+  // Les règles, ouvrables depuis l'écran de départ comme depuis le salon.
+  const regles = $('regles');
+  for (const bouton of document.querySelectorAll('[data-ouvre-regles]')) {
+    bouton.addEventListener('click', () => regles.showModal());
+  }
+  for (const bouton of document.querySelectorAll('[data-ferme-regles]')) {
+    bouton.addEventListener('click', () => regles.close());
+  }
+  // Clic en dehors du contenu : on referme, comme on s'y attend.
+  regles.addEventListener('click', (e) => {
+    if (e.target === regles) regles.close();
+  });
+
   $('btn-transferer').addEventListener('click', transferer);
   $('btn-cloturer').addEventListener('click', cloturerSoiree);
   $('btn-reinitialiser').addEventListener('click', () => {

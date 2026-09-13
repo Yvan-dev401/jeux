@@ -596,3 +596,156 @@
   .decompte__consigne { max-width: 40ch; }
   .bouton-tour { padding: 14px 16px; }
 }
+
+/* ------------------------------------------------------------------ */
+/* Règles : le résumé sur l'écran de départ, puis le détail            */
+/* ------------------------------------------------------------------ */
+
+.regles-courtes {
+  margin-bottom: clamp(28px, 5vw, 44px);
+}
+.regles-courtes__entete {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 14px;
+}
+.regles-courtes__entete h2 { margin: 0; }
+
+.regles-courtes__liste {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  counter-reset: regle;
+  list-style: none;
+  border-top: var(--filet);
+  border-left: var(--filet);
+}
+.regles-courtes__liste li {
+  padding: 22px 20px 24px;
+  border-right: var(--filet);
+  border-bottom: var(--filet);
+}
+.regles-courtes__liste li::before {
+  counter-increment: regle;
+  content: "0" counter(regle);
+  display: block;
+  margin-bottom: 16px;
+  font-family: var(--police-mono);
+  font-size: var(--txt-xs);
+  font-weight: 700;
+  letter-spacing: var(--suivi-mono);
+  color: var(--accent);
+}
+.regles-courtes__liste h3 { margin-bottom: 8px; font-size: 1.1rem; }
+.regles-courtes__liste p { margin: 0; font-size: var(--txt-m); color: var(--texte-doux); }
+
+/* La boîte de dialogue des règles complètes */
+.regles {
+  width: min(640px, 100vw);
+  max-height: 86vh;
+  max-height: 86dvh;
+  margin: auto;
+  padding: 0;
+  border: var(--filet);
+  border-radius: 0;
+  background: var(--fond-2);
+  color: var(--texte);
+  overflow: hidden;
+}
+.regles::backdrop {
+  background: color-mix(in srgb, var(--fond) 82%, transparent);
+}
+.regles[open] {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+}
+
+.regles__entete {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 20px;
+  border-bottom: var(--filet);
+  background: var(--accent);
+  color: var(--sur-accent);
+}
+.regles__entete h2 { margin: 0; font-size: 1.3rem; }
+.regles__entete .icone-bouton {
+  border-color: var(--sur-accent);
+  color: var(--sur-accent);
+}
+.regles__entete .icone-bouton:hover {
+  background: var(--sur-accent);
+  color: var(--accent);
+}
+
+.regles__corps {
+  padding: 4px 20px 20px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.regles__corps section {
+  padding: 20px 0;
+  border-bottom: var(--filet);
+}
+.regles__corps section:last-child { border-bottom: 0; }
+.regles__corps h3 {
+  margin-bottom: 10px;
+  font-family: var(--police-mono);
+  font-size: var(--txt-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: var(--suivi-mono);
+  color: var(--accent);
+}
+.regles__corps p {
+  margin: 0;
+  font-size: var(--txt-m);
+  color: var(--texte-doux);
+}
+.regles__corps strong { color: var(--texte); }
+.regles__corps ol,
+.regles__corps ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: etape-regle;
+}
+.regles__corps li {
+  position: relative;
+  padding: 7px 0 7px 30px;
+  font-size: var(--txt-m);
+  color: var(--texte-doux);
+}
+.regles__corps ol li::before {
+  counter-increment: etape-regle;
+  content: counter(etape-regle);
+  position: absolute;
+  left: 0;
+  font-family: var(--police-mono);
+  font-weight: 700;
+  color: var(--accent);
+}
+.regles__corps ul li::before {
+  content: "—";
+  position: absolute;
+  left: 0;
+  font-family: var(--police-mono);
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.regles__pied {
+  padding: 16px 20px;
+  border-top: var(--filet);
+}
+
+@media (max-width: 520px) {
+  .regles { width: 100vw; max-height: 92dvh; }
+}
