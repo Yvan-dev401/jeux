@@ -293,6 +293,17 @@ function rendreCartes(soiree) {
 
   const liste = $('liste-cartes');
   liste.textContent = '';
+
+  if (cartes.length === 0) {
+    const vide = document.createElement('li');
+    vide.className = 'liste-cartes__vide';
+    vide.textContent =
+      categorie === 'personnages'
+        ? 'Aucun personnage ajouté pour l’instant.'
+        : 'Aucune action ajoutée pour l’instant.';
+    liste.append(vide);
+  }
+
   for (const carte of cartes) {
     const li = document.createElement('li');
     li.className = 'carte-perso';
@@ -441,11 +452,20 @@ function afficherCombinaison() {
   const personnage = carte.parties.find((p) => p.categorie === 'personnages');
   const action = carte.parties.find((p) => p.categorie === 'actions');
 
-  $('combi-personnage').textContent = personnage ? `Je suis ${personnage.texte}` : '';
+  const texteP = personnage ? `Je suis ${personnage.texte}` : '';
+  const texteA = action ? action.texte : '';
+
+  $('combi-personnage').textContent = texteP;
   $('combi-personnage').hidden = !personnage;
-  $('combi-action').textContent = action ? action.texte : '';
+  $('combi-action').textContent = texteA;
   $('combi-action').hidden = !action;
   document.querySelector('.combinaison__liant').hidden = !(personnage && action);
+
+  // Plus la combinaison est longue, plus on baisse le plafond de taille :
+  // elle doit tenir à l'écran sans défilement, même en paysage.
+  const longueur = texteP.length + texteA.length;
+  $('bloc-combinaison').dataset.longueur =
+    longueur >= 50 ? 'long' : longueur >= 30 ? 'moyen' : 'court';
 }
 
 function repondre(resultat) {

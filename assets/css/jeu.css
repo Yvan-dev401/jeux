@@ -275,6 +275,20 @@
   color: var(--sur-accent);
 }
 
+.liste-cartes__titre {
+  margin: 18px 0 0;
+  font-family: var(--police-mono);
+  font-size: var(--txt-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: var(--suivi-mono);
+  color: var(--texte-doux);
+}
+.liste-cartes__vide {
+  font-size: var(--txt-s);
+  color: var(--texte-faible);
+}
+
 .liste-cartes {
   display: flex;
   flex-wrap: wrap;
@@ -284,8 +298,6 @@
   list-style: none;
   max-height: 220px;
   overflow-y: auto;
-  -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 28px), transparent 100%);
-  mask-image: linear-gradient(to bottom, #000 calc(100% - 28px), transparent 100%);
 }
 .carte-perso {
   display: inline-flex;
@@ -293,8 +305,9 @@
   gap: 8px;
   padding: 6px 6px 6px 12px;
   border: var(--filet);
+  background: var(--surface-2);
   font-size: var(--txt-s);
-  color: var(--texte-doux);
+  color: var(--texte);
 }
 .carte-perso button {
   width: 20px;
@@ -386,8 +399,12 @@
   inset: 0;
   z-index: 50;
   display: grid;
-  grid-template-rows: auto 1fr auto;
-  padding: 18px;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  padding:
+    max(16px, env(safe-area-inset-top))
+    max(16px, env(safe-area-inset-right))
+    max(16px, env(safe-area-inset-bottom))
+    max(16px, env(safe-area-inset-left));
   background: var(--fond);
   overscroll-behavior: contain;
   transition: background var(--duree-courte) var(--courbe);
@@ -409,7 +426,7 @@
 .tour__joueur { color: var(--texte-doux); overflow-wrap: anywhere; }
 .chrono {
   font-family: var(--police-mono);
-  font-size: clamp(1.5rem, 5vw, 2.1rem);
+  font-size: clamp(1.3rem, min(5vw, 5vh), 2.1rem);
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   letter-spacing: 0;
@@ -421,20 +438,29 @@
 
 .tour__centre {
   display: grid;
-  place-content: center;
-  gap: 18px;
-  padding: 16px;
+  align-content: center;
+  justify-items: center;
+  gap: 14px;
+  min-height: 0;
+  padding: 10px 4px;
+  overflow-y: auto;
   text-align: center;
 }
 .combinaison {
+  /* Plafond de taille ajusté à la longueur du texte (posé par le script) :
+     une combinaison courte peut s'afficher en très grand, une longue doit
+     rester entièrement visible sans faire défiler. */
+  --taille-max: 4.6rem;
   display: grid;
   gap: 10px;
   max-width: 20ch;
   margin-inline: auto;
 }
+.combinaison[data-longueur="moyen"] { --taille-max: 3.5rem; }
+.combinaison[data-longueur="long"] { --taille-max: 2.7rem; }
 .combinaison__partie {
   margin: 0;
-  font-size: clamp(2.1rem, 10vw, 4.6rem);
+  font-size: clamp(1.5rem, min(10vw, 9vh), var(--taille-max));
   font-weight: 700;
   line-height: 0.98;
   letter-spacing: var(--suivi-titre);
@@ -450,7 +476,7 @@
 .tour__verdict {
   margin: 0;
   font-family: var(--police-mono);
-  font-size: clamp(2.2rem, 13vw, 5rem);
+  font-size: clamp(1.8rem, min(13vw, 12vh), 5rem);
   font-weight: 700;
   letter-spacing: 0.04em;
 }
@@ -504,7 +530,7 @@
 }
 .decompte__nombre {
   margin: 0;
-  font-size: clamp(6rem, 32vw, 13rem);
+  font-size: clamp(3.5rem, min(32vw, 34vh), 13rem);
   font-weight: 700;
   line-height: 1;
   letter-spacing: var(--suivi-titre);
@@ -533,8 +559,6 @@
   max-height: 260px;
   overflow-y: auto;
   border-top: var(--filet);
-  -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 28px), transparent 100%);
-  mask-image: linear-gradient(to bottom, #000 calc(100% - 28px), transparent 100%);
 }
 .liste-recap li {
   display: flex;
@@ -577,6 +601,16 @@
 }
 
 @media (min-width: 700px) {
-  .plein-ecran { padding: 28px; }
   .tour__pied { max-width: 640px; margin-inline: auto; width: 100%; }
+}
+
+/* Téléphone tenu à l'horizontale : peu de hauteur, beaucoup de largeur. */
+@media (orientation: landscape) and (max-height: 560px) {
+  .tour__centre { gap: 6px; padding: 4px; }
+  .combinaison { max-width: 34ch; gap: 4px; }
+  .combinaison__partie { line-height: 1.02; }
+  .combinaison__liant { font-size: var(--txt-xs); }
+  .decompte { gap: 8px; }
+  .decompte__consigne { max-width: 40ch; }
+  .bouton-tour { padding: 14px 16px; }
 }

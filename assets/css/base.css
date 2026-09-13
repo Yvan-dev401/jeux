@@ -190,7 +190,9 @@ img, svg { max-width: 100%; }
   width: 100%;
   max-width: var(--largeur);
   margin-inline: auto;
-  padding-inline: var(--gouttiere);
+  padding-inline:
+    max(var(--gouttiere), env(safe-area-inset-left))
+    max(var(--gouttiere), env(safe-area-inset-right));
 }
 
 .lien-evitement {

@@ -156,8 +156,9 @@
               <span class="bloc__compteur" id="compteur-cartes">aucune carte ajoutée</span>
             </div>
             <p class="note espace-bas">
-              Complète le paquet avec vos personnages et vos actions maison. Ces cartes
-              ne servent qu'à cette soirée et disparaissent avec elle.
+              Le paquet de base contient déjà 201 cartes. Ici, tu ajoutes vos personnages
+              et vos actions maison : ils s'ajoutent au paquet pour cette soirée
+              seulement, et disparaissent avec elle.
             </p>
             <div class="onglets" role="tablist" aria-label="Catégorie de cartes">
               <button class="onglet" type="button" role="tab" id="onglet-personnages" aria-selected="true" data-categorie="personnages">Personnages</button>
@@ -168,7 +169,8 @@
               <button class="bouton bouton--petit bouton--violet" type="submit">Ajouter la carte</button>
             </form>
             <p class="champ__aide" id="exemple-carte">Écris le personnage tel qu'il se lit après « Je suis ».</p>
-            <ul class="liste-cartes" id="liste-cartes"></ul>
+            <p class="liste-cartes__titre" id="titre-liste-cartes">Vos cartes ajoutées</p>
+            <ul class="liste-cartes" id="liste-cartes" aria-labelledby="titre-liste-cartes"></ul>
           </div>
         </div>
 
