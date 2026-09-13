@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Mime ou rien — Jeux</title>
+  <meta name="description" content="Deux équipes, un chrono, et des mimes de plus en plus improbables à faire deviner. Jusqu'à 12 joueurs, aucune donnée conservée.">
+  <meta name="theme-color" content="#fbd509">
+  <link rel="icon" href="../../assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../../assets/css/base.css">
+  <link rel="stylesheet" href="../../assets/css/jeu.css">
+</head>
+<body>
+  <a class="lien-evitement" href="#contenu">Aller au contenu</a>
+
+  <header class="entete">
+    <div class="conteneur entete__interieur">
+      <a class="marque" href="../../">
+        <span class="marque__pastille" aria-hidden="true">▚</span>
+        <span>Jeux</span>
+      </a>
+      <nav class="entete__nav" aria-label="Navigation principale">
+        <a class="entete__lien" href="../../#catalogue">Catalogue</a>
+        <a class="entete__lien" href="../../#confidentialite">Vos données</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="spectre" aria-hidden="true"></div>
+
+  <main id="contenu" class="conteneur jeu-page">
+
+    <section class="ecran" id="ecran-depart" aria-labelledby="titre-jeu">
+      <div class="presentation">
+        <div>
+          <p class="etiquette">4 à 12 joueurs · Deux équipes</p>
+          <h1 id="titre-jeu">Mime ou rien</h1>
+          <p class="presentation__accroche">Deux équipes, un chrono, et des mimes de plus en plus improbables. Le mimeur garde l'écran pour lui et se lance : à son équipe de trouver, sans qu'il dise un mot.</p>
+          <ul class="presentation__exemples">
+            <li>Un pingouin</li>
+            <li>Rater son train de peu</li>
+            <li>Ouvrir un parapluie dans le vent</li>
+            <li>Un dompteur de puces</li>
+          </ul>
+        </div>
+
+        <div class="panneau">
+          <h2 class="titre-panneau">Ce que contient le paquet</h2>
+          <ul class="ameliorations">
+            <li>104 mimes répartis en trois niveaux</li>
+            <li>Facile, moyen, corsé — de 1 à 3 points</li>
+            <li>Chrono réglable de 30 s à 3 minutes</li>
+            <li>Équipes équilibrées automatiquement</li>
+            <li>Ça tient dans la poche</li>
+          </ul>
+        </div>
+      </div>
+
+      <section class="regles-courtes" aria-labelledby="titre-regles-courtes">
+        <div class="regles-courtes__entete">
+          <h2 id="titre-regles-courtes" class="titre-panneau">Les règles en trente secondes</h2>
+          <button class="bouton bouton--fantome bouton--petit" type="button" data-ouvre-regles>
+            Toutes les règles
+          </button>
+        </div>
+        <ol class="regles-courtes__liste">
+          <li>
+            <h3>Formez deux équipes</h3>
+            <p>Les joueurs se répartissent en alternance ; touche un nom pour le changer d'équipe.</p>
+          </li>
+          <li>
+            <h3>Mime sans un mot</h3>
+            <p>Le mimeur garde l'écran pour lui. Ni parole, ni bruit, ni objet.</p>
+          </li>
+          <li>
+            <h3>Enchaîne avant le chrono</h3>
+            <p>Chaque mime deviné rapporte de 1 à 3 points selon sa difficulté.</p>
+          </li>
+        </ol>
+      </section>
+
+      <p class="message message--erreur" id="erreur-depart" role="alert" hidden></p>
+      <p class="message message--erreur" id="alerte-fichier" role="alert" hidden>
+        Cette page est ouverte directement depuis un fichier, ce qui empêche le
+        navigateur de charger ses scripts. Publie le dossier (GitHub Pages) ou
+        lance un petit serveur local — par exemple <code>npm run serve</code> —
+        puis ouvre <code>http://localhost:8000/</code>.
+      </p>
+
+      <div class="depart">
+        <div class="panneau">
+          <h2>Nouvelle soirée</h2>
+          <p>
+            Ouvre la soirée sur le téléphone qui servira de plateau : c'est lui qu'on
+            se passera. Joueurs et scores n'existent que le temps de cette soirée.
+          </p>
+          <form id="form-creer" novalidate>
+            <label class="champ">
+              <span class="champ__libelle">Nom de la soirée (facultatif)</span>
+              <input type="text" id="champ-nom-soiree" name="nom" maxlength="24" placeholder="Samedi chez Léa" autocomplete="off">
+            </label>
+            <button class="bouton bouton--large" type="submit">Ouvrir la soirée</button>
+          </form>
+        </div>
+
+        <div class="panneau">
+          <h2>Reprendre une soirée</h2>
+          <p>
+            Une soirée déjà commencée se transfère par lien : colle-le ici pour
+            récupérer les joueurs, les scores et les réglages sur ce téléphone.
+          </p>
+          <form id="form-reprendre" novalidate>
+            <label class="champ">
+              <span class="champ__libelle">Lien de la soirée</span>
+              <input type="text" id="champ-lien" name="lien" inputmode="url" autocomplete="off" spellcheck="false" placeholder="https://…/#s=…" aria-describedby="aide-lien">
+              <span class="champ__aide" id="aide-lien">Ouvrir le lien directement marche aussi.</span>
+            </label>
+            <button class="bouton bouton--violet bouton--large" type="submit">Reprendre</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <section class="ecran" id="ecran-salon" aria-labelledby="titre-salon" hidden>
+      <div class="salon__entete">
+        <div>
+          <h1 id="titre-salon" class="titre-ecran"><span id="nom-soiree">Soirée</span></h1>
+          <p class="note">
+            La soirée vit dans cette page : recharger ne perd rien, fermer l'onglet
+            l'efface. Rien n'est envoyé ni enregistré nulle part.
+          </p>
+        </div>
+        <div class="code-soiree">
+          <div>
+            <span class="code-soiree__libelle">Soirée</span>
+            <span class="code-soiree__valeur" id="valeur-code">—</span>
+          </div>
+          <button class="bouton bouton--fantome bouton--petit" type="button" id="btn-transferer">Transférer</button>
+          <button class="bouton bouton--fantome bouton--petit" type="button" data-ouvre-regles>Règles</button>
+        </div>
+      </div>
+
+      <p class="message message--erreur" id="erreur-salon" role="alert" hidden></p>
+      <p class="message message--ok" id="info-salon" role="status" hidden></p>
+
+      <div class="grille-salon">
+        <div class="colonne">
+          <div class="panneau">
+            <div class="bloc__titre">
+              <h2>Joueurs</h2>
+              <span class="bloc__compteur" id="compteur-joueurs">0 / 12</span>
+            </div>
+            <ul class="liste-joueurs" id="liste-joueurs"></ul>
+            <p class="note" id="note-joueurs" hidden></p>
+            <form id="form-joueur" class="ligne-formulaire" novalidate>
+              <input type="text" id="champ-joueur" maxlength="24" placeholder="Prénom du joueur" aria-label="Prénom du joueur" autocomplete="off">
+              <button class="bouton bouton--petit" type="submit">Ajouter</button>
+            </form>
+          </div>
+          <div class="panneau">
+            <div class="bloc__titre">
+              <h2>Équipes</h2>
+              <span class="bloc__compteur" id="compteur-equipes">0 — 0</span>
+            </div>
+            <p class="note espace-bas">
+              Les joueurs sont répartis en alternance. Touche le nom d'un joueur dans
+              la liste ci-dessus pour le changer d'équipe.
+            </p>
+            <ul class="tableau-equipes" id="tableau-equipes"></ul>
+          </div>
+        </div>
+
+        <div class="colonne">
+          <div class="panneau">
+            <div class="bloc__titre"><h2>Réglages</h2></div>
+            <fieldset class="choix-duree" id="choix-duree">
+              <legend>Durée de la manche</legend>
+            </fieldset>
+            <p class="note espace-haut">Le paquet contient <strong id="detail-paquet">104 mimes</strong>, répartis en trois niveaux de difficulté.</p>
+          </div>
+
+          <div class="panneau">
+            <div class="bloc__titre"><h2>Manche suivante</h2></div>
+            <label class="champ">
+              <span class="champ__libelle">Qui mime ?</span>
+              <select id="choix-joueur" aria-describedby="aide-joueur"></select>
+              <span class="champ__aide" id="aide-joueur">Il garde l'écran pour lui et mime : son équipe devine à voix haute.</span>
+            </label>
+            <button class="bouton bouton--large" type="button" id="btn-lancer" disabled>Lancer la manche</button>
+          </div>
+
+          <div class="panneau">
+            <div class="bloc__titre">
+              <h2>Classement</h2>
+              <span class="bloc__compteur" id="compteur-manches">0 manche</span>
+            </div>
+            <ul class="podium" id="podium"></ul>
+            <div class="actions-pied sans-espace-haut">
+              <button class="bouton bouton--fantome bouton--petit" type="button" id="btn-reinitialiser">Remettre les scores à zéro</button>
+              <button class="bouton bouton--danger bouton--petit" type="button" id="btn-cloturer">Clôturer la soirée</button>
+            </div>
+            <p class="note espace-haut">
+              Clôturer efface immédiatement joueurs et scores, et vide le lien de la soirée.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+
+    <section class="ecran" id="ecran-recap" aria-labelledby="titre-recap" hidden>
+      <div class="panneau panneau--recap">
+        <p class="etiquette" id="recap-etiquette">Manche terminée</p>
+        <h1 id="titre-recap" class="titre-recap"><span id="recap-joueur">Mimeur</span></h1>
+        <p class="recap__score" id="recap-score">0 pt</p>
+        <p class="note" id="recap-detail"></p>
+        <ul class="liste-recap" id="recap-liste"></ul>
+        <div class="actions-pied actions-pied--centre">
+          <button class="bouton" type="button" id="btn-retour-salon">Équipe suivante</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="plein-ecran plein-ecran--pret" id="ecran-tour" role="dialog" aria-modal="true" aria-label="Manche en cours" hidden>
+    <div class="tour__entete">
+      <span class="tour__joueur" id="tour-joueur">Mimeur</span>
+      <span class="chrono" id="tour-chrono" role="timer" aria-live="off">60</span>
+      <button class="icone-bouton" type="button" id="btn-quitter-tour" aria-label="Arrêter la manche">✕</button>
+    </div>
+
+    <div class="tour__centre">
+      <div class="decompte" id="bloc-decompte">
+        <p class="decompte__consigne" id="decompte-consigne">Prépare-toi à mimer.</p>
+        <p class="decompte__nombre" id="decompte-nombre" aria-live="assertive">3</p>
+      </div>
+
+      <div class="combinaison" id="bloc-mime" hidden aria-live="polite">
+        <p class="mime__niveau" id="mime-niveau">Facile</p>
+        <p class="combinaison__partie" id="mime-texte">—</p>
+      </div>
+
+      <p class="tour__verdict" id="bloc-verdict" hidden></p>
+    </div>
+
+    <div class="tour__pied" id="bloc-actions-tour" hidden>
+      <button class="bouton-tour bouton-tour--passe" type="button" id="btn-passe">Passe</button>
+      <button class="bouton-tour bouton-tour--trouve" type="button" id="btn-trouve">Deviné</button>
+    </div>
+  </div>
+
+
+  <dialog class="regles" id="regles" aria-labelledby="titre-regles">
+    <div class="regles__entete">
+      <h2 id="titre-regles">Règles du jeu</h2>
+      <button class="icone-bouton" type="button" data-ferme-regles aria-label="Fermer les règles">✕</button>
+    </div>
+    <div class="regles__corps">
+      <section>
+        <h3>But du jeu</h3>
+        <p>
+          Faire deviner un maximum de mimes à son équipe avant la fin du chrono.
+          L'équipe qui totalise le plus de points à la fin de la soirée gagne.
+        </p>
+      </section>
+      <section>
+        <h3>Mise en place</h3>
+        <p>
+          Ajoute les joueurs : ils rejoignent l'équipe A ou B en alternance, et tu peux
+          les déplacer d'une touche. Il faut au moins deux joueurs par équipe — quelqu'un
+          doit bien deviner ce que le mimeur montre. Choisis ensuite la durée du chrono.
+        </p>
+      </section>
+      <section>
+        <h3>Une manche</h3>
+        <ol>
+          <li>Le mimeur garde le téléphone pour lui : seul lui voit les mimes.</li>
+          <li>Au top, il mime le premier sans parler, sans bruit et sans montrer d'objet.</li>
+          <li>Dès que son équipe trouve, il appuie sur « Deviné » et passe au suivant.</li>
+          <li>Un mime impossible ? « Passe » l'écarte, sans point ni pénalité.</li>
+          <li>Le chrono terminé, les points reviennent à l'équipe du mimeur.</li>
+        </ol>
+      </section>
+      <section>
+        <h3>Les points</h3>
+        <p>
+          Chaque mime rapporte selon sa difficulté : <strong>1 point</strong> pour un
+          mime facile, <strong>2</strong> pour un moyen, <strong>3</strong> pour un
+          corsé. Le niveau est annoncé au mimeur avant qu'il ne commence.
+        </p>
+      </section>
+      <section>
+        <h3>Pour répondre</h3>
+        <p>
+          Les deux boutons en bas de l'écran. Au clavier, la flèche droite vaut
+          « Deviné » et la flèche gauche « Passe ».
+        </p>
+      </section>
+      <section>
+        <h3>Quelques conseils</h3>
+        <ul>
+          <li>Découpe : montre d'abord le nombre de mots, puis chaque morceau.</li>
+          <li>Un mime corsé qui bloque coûte du temps : passe sans hésiter.</li>
+          <li>Alternez les mimeurs pour que tout le monde y passe.</li>
+        </ul>
+      </section>
+      <section>
+        <h3>D'où vient le contenu</h3>
+        <p>
+          Les 104 mimes de ce paquet ont été écrits pour cette version en ligne, en registre tout public. Ils ne proviennent d'aucun jeu existant.
+        </p>
+      </section>
+    </div>
+    <div class="regles__pied">
+      <button class="bouton bouton--large" type="button" data-ferme-regles>C'est parti</button>
+    </div>
+  </dialog>
+
+  <footer class="pied">
+    <div class="conteneur pied__interieur">
+      <p><a href="../../">← Retour au catalogue</a></p>
+      <p>Aucune donnée de partie n'est enregistrée.</p>
+    </div>
+  </footer>
+
+  <script src="../../assets/js/apparitions.js" type="module"></script>
+  <script src="../../assets/js/ui-mime-ou-rien.js" type="module"></script>
+  <script>
+    // Ouverte en « file:// », la page ne peut pas charger ses modules : plutôt
+    // qu'une interface inerte, on explique quoi faire. On se fie au protocole
+    // et non à un délai : sur une connexion lente, un délai accuse à tort un
+    // site parfaitement fonctionnel.
+    (function () {
+      if (location.protocol !== 'file:') return;
+      var alerte = document.getElementById('alerte-fichier');
+      alerte.hidden = false;
+      window.addEventListener('load', function () {
+        if (window.__jeuPret) alerte.hidden = true;
+      });
+    })();
+  </script>
+</body>
+</html>

@@ -749,3 +749,201 @@
 @media (max-width: 520px) {
   .regles { width: 100vw; max-height: 92dvh; }
 }
+
+/* ------------------------------------------------------------------ */
+/* Équipes (« Mime ou rien »)                                          */
+/* ------------------------------------------------------------------ */
+
+.badge-equipe {
+  flex: none;
+  width: 28px;
+  height: 28px;
+  border: var(--filet);
+  border-radius: 0;
+  background: transparent;
+  color: var(--texte-doux);
+  font-family: var(--police-mono);
+  font-size: var(--txt-xs);
+  font-weight: 700;
+  cursor: pointer;
+  transition: all var(--duree-courte) var(--courbe);
+}
+.badge-equipe--a { background: var(--accent); border-color: var(--accent); color: var(--sur-accent); }
+.badge-equipe--b { background: var(--texte); border-color: var(--texte); color: var(--sur-accent); }
+.badge-equipe:hover { filter: brightness(1.15); }
+
+.tableau-equipes {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: var(--filet);
+}
+.equipe {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 6px 14px;
+  align-items: baseline;
+  padding: 13px 0;
+  border-bottom: var(--filet);
+}
+.equipe__nom {
+  font-family: var(--police-mono);
+  font-size: var(--txt-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: var(--suivi-mono);
+  color: var(--accent);
+}
+.equipe--b .equipe__nom { color: var(--texte); }
+.equipe__membres {
+  font-size: var(--txt-s);
+  color: var(--texte-doux);
+  overflow-wrap: anywhere;
+}
+.equipe__points {
+  font-family: var(--police-mono);
+  font-size: var(--txt-s);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--texte);
+}
+
+.mime__niveau {
+  margin: 0;
+  font-family: var(--police-mono);
+  font-size: var(--txt-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: var(--suivi-mono);
+  color: var(--accent);
+}
+.plein-ecran--trouve .mime__niveau { color: var(--sur-accent); }
+
+/* Le récapitulatif de manche liste les mimes joués. */
+.liste-recap {
+  display: grid;
+  gap: 0;
+  margin: 22px 0;
+  padding: 0;
+  list-style: none;
+  max-height: 260px;
+  overflow-y: auto;
+  border-top: var(--filet);
+  text-align: left;
+}
+.liste-recap li {
+  display: flex;
+  gap: 14px;
+  align-items: baseline;
+  padding: 11px 0;
+  border-bottom: var(--filet);
+  font-size: var(--txt-m);
+  color: var(--texte-doux);
+}
+.liste-recap li[data-resultat="trouve"] { color: var(--texte); }
+.liste-recap__marque {
+  flex: none;
+  min-width: 2.2em;
+  font-family: var(--police-mono);
+  font-weight: 700;
+  color: var(--accent);
+}
+.liste-recap li[data-resultat="passe"] .liste-recap__marque { color: var(--texte-faible); }
+
+/* ------------------------------------------------------------------ */
+/* Écrans privés (« Le mot piégé », « Qui a dit ça ? »)                */
+/* ------------------------------------------------------------------ */
+
+.secret,
+.secret__nom {
+  text-align: center;
+}
+.secret__nom {
+  margin: 10px 0;
+  font-size: clamp(2.2rem, min(11vw, 10vh), 4.4rem);
+  font-weight: 700;
+  line-height: 1.02;
+  letter-spacing: var(--suivi-titre);
+  color: var(--accent);
+  overflow-wrap: anywhere;
+}
+.secret__libelle {
+  margin: 0 0 12px;
+  font-family: var(--police-mono);
+  font-size: var(--txt-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: var(--suivi-mono);
+  color: var(--texte-doux);
+}
+.secret__mot {
+  margin: 0 0 14px;
+  font-size: clamp(2rem, min(12vw, 11vh), 4.6rem);
+  font-weight: 700;
+  line-height: 1.02;
+  letter-spacing: var(--suivi-titre);
+  color: var(--texte);
+  overflow-wrap: anywhere;
+}
+
+/* Le pied d'un écran privé n'a qu'un bouton : il prend toute la largeur. */
+#ecran-distribution .tour__pied,
+#ecran-collecte .tour__pied {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.choix-joueurs {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: var(--filet);
+}
+.choix-joueur {
+  width: 100%;
+  padding: 16px 14px;
+  border: 0;
+  border-bottom: var(--filet);
+  border-radius: 0;
+  background: transparent;
+  color: var(--texte);
+  font: inherit;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--duree-courte) var(--courbe), color var(--duree-courte) var(--courbe);
+}
+.choix-joueur:hover {
+  background: var(--accent);
+  color: var(--sur-accent);
+}
+
+/* Attribution des réponses (« Qui a dit ça ? ») */
+.secret--saisie { width: min(460px, 100%); }
+.secret--saisie .champ { margin-bottom: 14px; }
+
+.attributions {
+  display: grid;
+  gap: 0;
+  margin: 0 0 22px;
+  padding: 0;
+  list-style: none;
+  border-top: var(--filet);
+  text-align: left;
+}
+.attribution {
+  padding: 16px 0;
+  border-bottom: var(--filet);
+}
+.attribution__texte {
+  margin: 0 0 12px;
+  font-size: var(--txt-l);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--texte);
+  overflow-wrap: anywhere;
+}

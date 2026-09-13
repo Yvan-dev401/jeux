@@ -143,14 +143,21 @@
   text-transform: uppercase;
   letter-spacing: var(--suivi-mono);
 }
-/* Le jeu disponible prend l'aplat jaune : il porte le regard. */
+/* Le premier jeu du catalogue prend l'aplat jaune : il porte le regard.
+   Les autres gardent un fond sombre, sinon quatre pavés jaunes se neutralisent. */
 .jeu--dispo .jeu__visuel {
   background: var(--accent);
   color: var(--sur-accent);
 }
-.jeu__visuel--violet,
-.jeu__visuel--nuit,
-.jeu__visuel--vert { background: var(--surface); color: var(--texte-faible); }
+.jeu .jeu__visuel--violet,
+.jeu .jeu__visuel--nuit,
+.jeu .jeu__visuel--vert {
+  background: var(--surface);
+  color: var(--texte-doux);
+}
+.jeu .jeu__visuel--violet .jeu__fleche,
+.jeu .jeu__visuel--nuit .jeu__fleche,
+.jeu .jeu__visuel--vert .jeu__fleche { color: var(--accent); }
 
 .jeu__corps {
   display: flex;

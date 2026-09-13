@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Qui a dit ça ? — Jeux</title>
+  <meta name="description" content="Chacun répond anonymement à une question, et le meneur doit deviner qui se cache derrière chaque réponse. De 3 à 12 joueurs, aucune donnée conservée.">
+  <meta name="theme-color" content="#fbd509">
+  <link rel="icon" href="../../assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../../assets/css/base.css">
+  <link rel="stylesheet" href="../../assets/css/jeu.css">
+</head>
+<body>
+  <a class="lien-evitement" href="#contenu">Aller au contenu</a>
+
+  <header class="entete">
+    <div class="conteneur entete__interieur">
+      <a class="marque" href="../../">
+        <span class="marque__pastille" aria-hidden="true">▚</span>
+        <span>Jeux</span>
+      </a>
+      <nav class="entete__nav" aria-label="Navigation principale">
+        <a class="entete__lien" href="../../#catalogue">Catalogue</a>
+        <a class="entete__lien" href="../../#confidentialite">Vos données</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="spectre" aria-hidden="true"></div>
+
+  <main id="contenu" class="conteneur jeu-page">
+
+    <section class="ecran" id="ecran-depart" aria-labelledby="titre-jeu">
+      <div class="presentation">
+        <div>
+          <p class="etiquette">3 à 12 joueurs · Anonymat</p>
+          <h1 id="titre-jeu">Qui a dit ça ?</h1>
+          <p class="presentation__accroche">Chacun répond anonymement à une question, puis le meneur tente de rendre chaque réponse à son auteur. Se faire démasquer ne rapporte rien : restez insaisissables.</p>
+          <ul class="presentation__exemples">
+            <li>Mon talent le plus inutile</li>
+            <li>Le pire cadeau que j’aie reçu</li>
+            <li>Ma manie quand je suis stressé</li>
+            <li>Mon pire achat sur internet</li>
+          </ul>
+        </div>
+
+        <div class="panneau">
+          <h2 class="titre-panneau">Ce que contient le paquet</h2>
+          <ul class="ameliorations">
+            <li>60 questions courtes</li>
+            <li>Un meneur différent à chaque manche</li>
+            <li>Réponses saisies en privé, téléphone en main</li>
+            <li>Aucune réponse n’est jamais transmise par le lien</li>
+            <li>Ça tient dans la poche</li>
+          </ul>
+        </div>
+      </div>
+
+      <section class="regles-courtes" aria-labelledby="titre-regles-courtes">
+        <div class="regles-courtes__entete">
+          <h2 id="titre-regles-courtes" class="titre-panneau">Les règles en trente secondes</h2>
+          <button class="bouton bouton--fantome bouton--petit" type="button" data-ouvre-regles>
+            Toutes les règles
+          </button>
+        </div>
+        <ol class="regles-courtes__liste">
+          <li>
+            <h3>Répondez en secret</h3>
+            <p>Le téléphone circule : chacun écrit sa réponse à la question, à l’abri des regards.</p>
+          </li>
+          <li>
+            <h3>Le meneur devine</h3>
+            <p>Les réponses lui arrivent mélangées ; il les rend à leurs auteurs.</p>
+          </li>
+          <li>
+            <h3>Marquez</h3>
+            <p>Chaque bonne attribution rapporte au meneur, chaque anonymat préservé à son auteur.</p>
+          </li>
+        </ol>
+      </section>
+
+      <p class="message message--erreur" id="erreur-depart" role="alert" hidden></p>
+      <p class="message message--erreur" id="alerte-fichier" role="alert" hidden>
+        Cette page est ouverte directement depuis un fichier, ce qui empêche le
+        navigateur de charger ses scripts. Publie le dossier (GitHub Pages) ou
+        lance un petit serveur local — par exemple <code>npm run serve</code> —
+        puis ouvre <code>http://localhost:8000/</code>.
+      </p>
+
+      <div class="depart">
+        <div class="panneau">
+          <h2>Nouvelle soirée</h2>
+          <p>
+            Ouvre la soirée sur le téléphone qui servira de plateau : c'est lui qu'on
+            se passera. Joueurs et scores n'existent que le temps de cette soirée.
+          </p>
+          <form id="form-creer" novalidate>
+            <label class="champ">
+              <span class="champ__libelle">Nom de la soirée (facultatif)</span>
+              <input type="text" id="champ-nom-soiree" name="nom" maxlength="24" placeholder="Samedi chez Léa" autocomplete="off">
+            </label>
+            <button class="bouton bouton--large" type="submit">Ouvrir la soirée</button>
+          </form>
+        </div>
+
+        <div class="panneau">
+          <h2>Reprendre une soirée</h2>
+          <p>
+            Une soirée déjà commencée se transfère par lien : colle-le ici pour
+            récupérer les joueurs, les scores et les réglages sur ce téléphone.
+          </p>
+          <form id="form-reprendre" novalidate>
+            <label class="champ">
+              <span class="champ__libelle">Lien de la soirée</span>
+              <input type="text" id="champ-lien" name="lien" inputmode="url" autocomplete="off" spellcheck="false" placeholder="https://…/#s=…" aria-describedby="aide-lien">
+              <span class="champ__aide" id="aide-lien">Ouvrir le lien directement marche aussi.</span>
+            </label>
+            <button class="bouton bouton--violet bouton--large" type="submit">Reprendre</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <section class="ecran" id="ecran-salon" aria-labelledby="titre-salon" hidden>
+      <div class="salon__entete">
+        <div>
+          <h1 id="titre-salon" class="titre-ecran"><span id="nom-soiree">Soirée</span></h1>
+          <p class="note">
+            La soirée vit dans cette page : recharger ne perd rien, fermer l'onglet
+            l'efface. Rien n'est envoyé ni enregistré nulle part.
+          </p>
+        </div>
+        <div class="code-soiree">
+          <div>
+            <span class="code-soiree__libelle">Soirée</span>
+            <span class="code-soiree__valeur" id="valeur-code">—</span>
+          </div>
+          <button class="bouton bouton--fantome bouton--petit" type="button" id="btn-transferer">Transférer</button>
+          <button class="bouton bouton--fantome bouton--petit" type="button" data-ouvre-regles>Règles</button>
+        </div>
+      </div>
+
+      <p class="message message--erreur" id="erreur-salon" role="alert" hidden></p>
+      <p class="message message--ok" id="info-salon" role="status" hidden></p>
+
+      <div class="grille-salon">
+        <div class="colonne">
+          <div class="panneau">
+            <div class="bloc__titre">
+              <h2>Joueurs</h2>
+              <span class="bloc__compteur" id="compteur-joueurs">0 / 12</span>
+            </div>
+            <ul class="liste-joueurs" id="liste-joueurs"></ul>
+            <p class="note" id="note-joueurs" hidden></p>
+            <form id="form-joueur" class="ligne-formulaire" novalidate>
+              <input type="text" id="champ-joueur" maxlength="24" placeholder="Prénom du joueur" aria-label="Prénom du joueur" autocomplete="off">
+              <button class="bouton bouton--petit" type="submit">Ajouter</button>
+            </form>
+          </div>
+
+        </div>
+
+        <div class="colonne">
+          <div class="panneau">
+            <div class="bloc__titre"><h2>Réglages</h2></div>
+            <fieldset class="choix-duree" id="choix-duree">
+              <legend>Durée indicative (facultative)</legend>
+            </fieldset>
+            <p class="note espace-haut">Le paquet contient <strong id="detail-paquet">60 questions</strong>, tirées sans répétition tant que la soirée dure.</p>
+          </div>
+
+          <div class="panneau">
+            <div class="bloc__titre"><h2>Manche suivante</h2></div>
+            <label class="champ">
+              <span class="champ__libelle">Qui mène cette manche ?</span>
+              <select id="choix-joueur" aria-describedby="aide-joueur"></select>
+              <span class="champ__aide" id="aide-joueur">Le meneur ne répond pas : c'est lui qui devra rendre chaque réponse à son auteur.</span>
+            </label>
+            <button class="bouton bouton--large" type="button" id="btn-lancer" disabled>Tirer une question</button>
+          </div>
+
+          <div class="panneau">
+            <div class="bloc__titre">
+              <h2>Classement</h2>
+              <span class="bloc__compteur" id="compteur-manches">0 manche</span>
+            </div>
+            <ul class="podium" id="podium"></ul>
+            <div class="actions-pied sans-espace-haut">
+              <button class="bouton bouton--fantome bouton--petit" type="button" id="btn-reinitialiser">Remettre les scores à zéro</button>
+              <button class="bouton bouton--danger bouton--petit" type="button" id="btn-cloturer">Clôturer la soirée</button>
+            </div>
+            <p class="note espace-haut">
+              Clôturer efface immédiatement joueurs et scores, et vide le lien de la soirée.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="ecran" id="ecran-attribution" aria-labelledby="titre-attribution" hidden>
+      <div class="panneau panneau--recap">
+        <p class="etiquette" id="attribution-meneur">Au meneur de deviner</p>
+        <h1 id="titre-attribution" class="titre-recap"><span id="attribution-question">La question</span></h1>
+        <p class="note espace-bas">
+          Les réponses sont mélangées. Rends chacune à son auteur : chaque bonne
+          attribution te rapporte un point, chaque auteur que tu rates en marque un.
+        </p>
+        <ul class="attributions" id="liste-attributions"></ul>
+        <div class="actions-pied actions-pied--centre">
+          <button class="bouton" type="button" id="btn-valider-attributions">Valider mes réponses</button>
+        </div>
+      </div>
+    </section>
+
+
+    <section class="ecran" id="ecran-recap" aria-labelledby="titre-recap" hidden>
+      <div class="panneau panneau--recap">
+        <p class="etiquette" id="recap-etiquette">Manche terminée</p>
+        <h1 id="titre-recap" class="titre-recap"><span id="recap-joueur">Meneur</span></h1>
+        <p class="recap__score" id="recap-score">0 pt</p>
+        <p class="note" id="recap-detail"></p>
+        <ul class="liste-recap" id="recap-liste"></ul>
+        <div class="actions-pied actions-pied--centre">
+          <button class="bouton" type="button" id="btn-retour-salon">Meneur suivant</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="plein-ecran plein-ecran--pret" id="ecran-collecte" role="dialog" aria-modal="true" aria-label="Collecte des réponses" hidden>
+    <div class="tour__entete">
+      <span class="tour__joueur" id="collecte-progression">1 / 3</span>
+      <span class="mono" id="collecte-etiquette">Réponses</span>
+      <button class="icone-bouton" type="button" id="btn-quitter-collecte" aria-label="Arrêter la manche">✕</button>
+    </div>
+
+    <div class="tour__centre">
+      <div class="decompte" id="bloc-passe">
+        <p class="decompte__consigne">Passe le téléphone à</p>
+        <p class="secret__nom" id="collecte-nom">Joueur</p>
+        <p class="note">Les autres ne doivent pas voir ce que tu écris.</p>
+      </div>
+
+      <div class="secret secret--saisie" id="bloc-saisie" hidden>
+        <p class="secret__libelle" id="collecte-question">La question</p>
+        <form id="form-reponse" novalidate>
+          <label class="champ">
+            <span class="invisible">Ta réponse</span>
+            <input type="text" id="champ-reponse" maxlength="90" autocomplete="off" placeholder="Ta réponse, en quelques mots">
+          </label>
+          <button class="bouton bouton--large" type="submit">Valider et passer</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="tour__pied">
+      <button class="bouton-tour bouton-tour--trouve" type="button" id="btn-repondre">C'est moi, à mon tour</button>
+    </div>
+  </div>
+
+
+  <dialog class="regles" id="regles" aria-labelledby="titre-regles">
+    <div class="regles__entete">
+      <h2 id="titre-regles">Règles du jeu</h2>
+      <button class="icone-bouton" type="button" data-ferme-regles aria-label="Fermer les règles">✕</button>
+    </div>
+    <div class="regles__corps">
+      <section>
+        <h3>But du jeu</h3>
+        <p>
+          Une question, des réponses anonymes, et un meneur qui tente de les rendre à
+          leurs auteurs. Deviner rapporte ; rester méconnaissable rapporte tout autant.
+        </p>
+      </section>
+      <section>
+        <h3>Mise en place</h3>
+        <p>
+          Ajoute au moins trois joueurs. À chaque manche, un meneur différent prend la
+          main — le jeu propose celui qui a mené le moins souvent.
+        </p>
+      </section>
+      <section>
+        <h3>Une manche</h3>
+        <ol>
+          <li>Une question est tirée, par exemple « Mon talent le plus inutile ».</li>
+          <li>Le téléphone circule : chacun écrit sa réponse à l'abri des regards.</li>
+          <li>Le meneur, lui, ne répond pas : il attend son tour sans rien voir.</li>
+          <li>Les réponses lui sont ensuite présentées, mélangées.</li>
+          <li>Il attribue chaque réponse à un joueur, puis valide. Tout est révélé.</li>
+        </ol>
+      </section>
+      <section>
+        <h3>Les points</h3>
+        <p>
+          Le meneur marque <strong>1 point par réponse correctement attribuée</strong>.
+          Chaque joueur dont la réponse n'a pas été reconnue marque
+          <strong>1 point</strong>. Autrement dit : soit le meneur vous démasque, soit
+          vous marquez.
+        </p>
+      </section>
+      <section>
+        <h3>Écrire une bonne réponse</h3>
+        <p>
+          Répondez court et sincèrement : c'est plus drôle. Une réponse trop
+          caractéristique vous trahit, une réponse trop fade se confond avec les
+          autres — et c'est exactement l'équilibre à trouver.
+        </p>
+      </section>
+      <section>
+        <h3>Quelques conseils</h3>
+        <ul>
+          <li>Évitez les tournures que vous seul employez.</li>
+          <li>Le meneur a le droit de poser des questions… et tout le monde de mentir.</li>
+          <li>À trois joueurs, le meneur n'a que deux réponses à démêler : ça va vite.</li>
+        </ul>
+      </section>
+      <section>
+        <h3>D'où vient le contenu</h3>
+        <p>
+          Les 60 questions ont été écrites pour cette version en ligne. Elles ne proviennent d'aucun jeu existant.
+        </p>
+      </section>
+    </div>
+    <div class="regles__pied">
+      <button class="bouton bouton--large" type="button" data-ferme-regles>C'est parti</button>
+    </div>
+  </dialog>
+
+  <footer class="pied">
+    <div class="conteneur pied__interieur">
+      <p><a href="../../">← Retour au catalogue</a></p>
+      <p>Aucune donnée de partie n'est enregistrée.</p>
+    </div>
+  </footer>
+
+  <script src="../../assets/js/apparitions.js" type="module"></script>
+  <script src="../../assets/js/ui-qui-a-dit-ca.js" type="module"></script>
+  <script>
+    // Ouverte en « file:// », la page ne peut pas charger ses modules : plutôt
+    // qu'une interface inerte, on explique quoi faire. On se fie au protocole
+    // et non à un délai : sur une connexion lente, un délai accuse à tort un
+    // site parfaitement fonctionnel.
+    (function () {
+      if (location.protocol !== 'file:') return;
+      var alerte = document.getElementById('alerte-fichier');
+      alerte.hidden = false;
+      window.addEventListener('load', function () {
+        if (window.__jeuPret) alerte.hidden = true;
+      });
+    })();
+  </script>
+</body>
+</html>

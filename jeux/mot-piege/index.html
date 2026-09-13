@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Le mot piégé — Jeux</title>
+  <meta name="description" content="Tout le monde reçoit le même mot… sauf un. Discutez, votez, démasquez l'intrus. De 4 à 12 joueurs, aucune donnée conservée.">
+  <meta name="theme-color" content="#fbd509">
+  <link rel="icon" href="../../assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../../assets/css/base.css">
+  <link rel="stylesheet" href="../../assets/css/jeu.css">
+</head>
+<body>
+  <a class="lien-evitement" href="#contenu">Aller au contenu</a>
+
+  <header class="entete">
+    <div class="conteneur entete__interieur">
+      <a class="marque" href="../../">
+        <span class="marque__pastille" aria-hidden="true">▚</span>
+        <span>Jeux</span>
+      </a>
+      <nav class="entete__nav" aria-label="Navigation principale">
+        <a class="entete__lien" href="../../#catalogue">Catalogue</a>
+        <a class="entete__lien" href="../../#confidentialite">Vos données</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="spectre" aria-hidden="true"></div>
+
+  <main id="contenu" class="conteneur jeu-page">
+
+    <section class="ecran" id="ecran-depart" aria-labelledby="titre-jeu">
+      <div class="presentation">
+        <div>
+          <p class="etiquette">4 à 12 joueurs · Déduction</p>
+          <h1 id="titre-jeu">Le mot piégé</h1>
+          <p class="presentation__accroche">Tout le monde reçoit le même mot, sauf un. L'intrus ignore qu'il en est un : à lui de se fondre dans la discussion, et au groupe de le démasquer.</p>
+          <ul class="presentation__exemples">
+            <li>La plage… ou la piscine ?</li>
+            <li>Le train… ou le métro ?</li>
+            <li>Le violon… ou l’alto ?</li>
+            <li>Qui hésite un peu trop ?</li>
+          </ul>
+        </div>
+
+        <div class="panneau">
+          <h2 class="titre-panneau">Ce que contient le paquet</h2>
+          <ul class="ameliorations">
+            <li>60 paires de mots proches</li>
+            <li>Un intrus tiré au sort à chaque manche</li>
+            <li>Distribution privée, téléphone en main</li>
+            <li>Aucun mot n’est jamais transmis par le lien</li>
+            <li>Ça tient dans la poche</li>
+          </ul>
+        </div>
+      </div>
+
+      <section class="regles-courtes" aria-labelledby="titre-regles-courtes">
+        <div class="regles-courtes__entete">
+          <h2 id="titre-regles-courtes" class="titre-panneau">Les règles en trente secondes</h2>
+          <button class="bouton bouton--fantome bouton--petit" type="button" data-ouvre-regles>
+            Toutes les règles
+          </button>
+        </div>
+        <ol class="regles-courtes__liste">
+          <li>
+            <h3>Découvrez vos mots</h3>
+            <p>Le téléphone circule : chacun voit son mot en privé, puis le cache.</p>
+          </li>
+          <li>
+            <h3>Donnez un indice</h3>
+            <p>À voix haute, chacun lâche un mot en rapport avec le sien — sans le prononcer.</p>
+          </li>
+          <li>
+            <h3>Votez</h3>
+            <p>Démasquez l'intrus, ou laissez-le filer avec la mise.</p>
+          </li>
+        </ol>
+      </section>
+
+      <p class="message message--erreur" id="erreur-depart" role="alert" hidden></p>
+      <p class="message message--erreur" id="alerte-fichier" role="alert" hidden>
+        Cette page est ouverte directement depuis un fichier, ce qui empêche le
+        navigateur de charger ses scripts. Publie le dossier (GitHub Pages) ou
+        lance un petit serveur local — par exemple <code>npm run serve</code> —
+        puis ouvre <code>http://localhost:8000/</code>.
+      </p>
+
+      <div class="depart">
+        <div class="panneau">
+          <h2>Nouvelle soirée</h2>
+          <p>
+            Ouvre la soirée sur le téléphone qui servira de plateau : c'est lui qu'on
+            se passera. Joueurs et scores n'existent que le temps de cette soirée.
+          </p>
+          <form id="form-creer" novalidate>
+            <label class="champ">
+              <span class="champ__libelle">Nom de la soirée (facultatif)</span>
+              <input type="text" id="champ-nom-soiree" name="nom" maxlength="24" placeholder="Samedi chez Léa" autocomplete="off">
+            </label>
+            <button class="bouton bouton--large" type="submit">Ouvrir la soirée</button>
+          </form>
+        </div>
+
+        <div class="panneau">
+          <h2>Reprendre une soirée</h2>
+          <p>
+            Une soirée déjà commencée se transfère par lien : colle-le ici pour
+            récupérer les joueurs, les scores et les réglages sur ce téléphone.
+          </p>
+          <form id="form-reprendre" novalidate>
+            <label class="champ">
+              <span class="champ__libelle">Lien de la soirée</span>
+              <input type="text" id="champ-lien" name="lien" inputmode="url" autocomplete="off" spellcheck="false" placeholder="https://…/#s=…" aria-describedby="aide-lien">
+              <span class="champ__aide" id="aide-lien">Ouvrir le lien directement marche aussi.</span>
+            </label>
+            <button class="bouton bouton--violet bouton--large" type="submit">Reprendre</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <section class="ecran" id="ecran-salon" aria-labelledby="titre-salon" hidden>
+      <div class="salon__entete">
+        <div>
+          <h1 id="titre-salon" class="titre-ecran"><span id="nom-soiree">Soirée</span></h1>
+          <p class="note">
+            La soirée vit dans cette page : recharger ne perd rien, fermer l'onglet
+            l'efface. Rien n'est envoyé ni enregistré nulle part.
+          </p>
+        </div>
+        <div class="code-soiree">
+          <div>
+            <span class="code-soiree__libelle">Soirée</span>
+            <span class="code-soiree__valeur" id="valeur-code">—</span>
+          </div>
+          <button class="bouton bouton--fantome bouton--petit" type="button" id="btn-transferer">Transférer</button>
+          <button class="bouton bouton--fantome bouton--petit" type="button" data-ouvre-regles>Règles</button>
+        </div>
+      </div>
+
+      <p class="message message--erreur" id="erreur-salon" role="alert" hidden></p>
+      <p class="message message--ok" id="info-salon" role="status" hidden></p>
+
+      <div class="grille-salon">
+        <div class="colonne">
+          <div class="panneau">
+            <div class="bloc__titre">
+              <h2>Joueurs</h2>
+              <span class="bloc__compteur" id="compteur-joueurs">0 / 12</span>
+            </div>
+            <ul class="liste-joueurs" id="liste-joueurs"></ul>
+            <p class="note" id="note-joueurs" hidden></p>
+            <form id="form-joueur" class="ligne-formulaire" novalidate>
+              <input type="text" id="champ-joueur" maxlength="24" placeholder="Prénom du joueur" aria-label="Prénom du joueur" autocomplete="off">
+              <button class="bouton bouton--petit" type="submit">Ajouter</button>
+            </form>
+          </div>
+
+        </div>
+
+        <div class="colonne">
+          <div class="panneau">
+            <div class="bloc__titre"><h2>Réglages</h2></div>
+            <fieldset class="choix-duree" id="choix-duree">
+              <legend>Durée de discussion (facultative)</legend>
+            </fieldset>
+            <p class="note espace-haut">Le paquet contient <strong id="detail-paquet">60 paires</strong> de mots volontairement proches.</p>
+          </div>
+
+          <div class="panneau">
+            <div class="bloc__titre"><h2>Manche suivante</h2></div>
+            <p class="note espace-bas" id="aide-manche">
+              Le téléphone va circuler : chacun découvre son mot en privé, puis on
+              discute et on vote.
+            </p>
+            <button class="bouton bouton--large" type="button" id="btn-lancer" disabled>Distribuer les mots</button>
+          </div>
+
+          <div class="panneau">
+            <div class="bloc__titre">
+              <h2>Classement</h2>
+              <span class="bloc__compteur" id="compteur-manches">0 manche</span>
+            </div>
+            <ul class="podium" id="podium"></ul>
+            <div class="actions-pied sans-espace-haut">
+              <button class="bouton bouton--fantome bouton--petit" type="button" id="btn-reinitialiser">Remettre les scores à zéro</button>
+              <button class="bouton bouton--danger bouton--petit" type="button" id="btn-cloturer">Clôturer la soirée</button>
+            </div>
+            <p class="note espace-haut">
+              Clôturer efface immédiatement joueurs et scores, et vide le lien de la soirée.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="ecran" id="ecran-vote" aria-labelledby="titre-vote" hidden>
+      <div class="panneau panneau--recap">
+        <p class="etiquette">À vous de discuter</p>
+        <h1 id="titre-vote" class="titre-recap">Qui est l'intrus ?</h1>
+        <p class="note espace-bas">
+          Chacun son tour, donnez un mot en rapport avec le vôtre — sans le dire.
+          Puis votez à main levée et désignez le suspect ici.
+        </p>
+        <ul class="choix-joueurs" id="liste-suspects"></ul>
+        <div class="actions-pied">
+          <button class="bouton bouton--fantome" type="button" id="btn-personne">Le groupe ne se décide pas</button>
+        </div>
+      </div>
+    </section>
+
+
+    <section class="ecran" id="ecran-recap" aria-labelledby="titre-recap" hidden>
+      <div class="panneau panneau--recap">
+        <p class="etiquette" id="recap-etiquette">Manche terminée</p>
+        <h1 id="titre-recap" class="titre-recap"><span id="recap-verdict">Résultat</span></h1>
+        <p class="recap__score" id="recap-score">0 pt</p>
+        <p class="note" id="recap-detail"></p>
+        <p class="recap__combinaison" id="recap-mots"></p>
+        <div class="actions-pied actions-pied--centre">
+          <button class="bouton" type="button" id="btn-retour-salon">Manche suivante</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="plein-ecran plein-ecran--pret" id="ecran-distribution" role="dialog" aria-modal="true" aria-label="Distribution des mots" hidden>
+    <div class="tour__entete">
+      <span class="tour__joueur" id="distrib-progression">1 / 4</span>
+      <span class="mono" id="distrib-etiquette">Distribution</span>
+      <button class="icone-bouton" type="button" id="btn-quitter-distribution" aria-label="Arrêter la distribution">✕</button>
+    </div>
+
+    <div class="tour__centre">
+      <div class="decompte" id="bloc-passe">
+        <p class="decompte__consigne">Passe le téléphone à</p>
+        <p class="secret__nom" id="distrib-nom">Joueur</p>
+        <p class="note" id="distrib-consigne">Personne d'autre ne doit regarder l'écran.</p>
+      </div>
+
+      <div class="secret" id="bloc-secret" hidden>
+        <p class="secret__libelle">Ton mot</p>
+        <p class="secret__mot" id="secret-mot">—</p>
+        <p class="note">Retiens-le, puis cache l'écran.</p>
+      </div>
+    </div>
+
+    <div class="tour__pied">
+      <button class="bouton-tour bouton-tour--trouve" type="button" id="btn-voir-mot">Je suis prêt, montrer mon mot</button>
+      <button class="bouton-tour bouton-tour--trouve" type="button" id="btn-mot-vu" hidden>J'ai vu — au suivant</button>
+    </div>
+  </div>
+
+
+  <dialog class="regles" id="regles" aria-labelledby="titre-regles">
+    <div class="regles__entete">
+      <h2 id="titre-regles">Règles du jeu</h2>
+      <button class="icone-bouton" type="button" data-ferme-regles aria-label="Fermer les règles">✕</button>
+    </div>
+    <div class="regles__corps">
+      <section>
+        <h3>But du jeu</h3>
+        <p>
+          Tout le monde reçoit le même mot, sauf un : l'intrus. Le groupe doit le
+          démasquer — et l'intrus, qui ignore qu'il en est un, doit passer inaperçu.
+        </p>
+      </section>
+      <section>
+        <h3>Mise en place</h3>
+        <p>
+          Ajoute au moins quatre joueurs. Aucun réglage n'est nécessaire : le chrono
+          ne sert que si vous voulez limiter le temps de discussion.
+        </p>
+      </section>
+      <section>
+        <h3>Une manche</h3>
+        <ol>
+          <li>Le téléphone circule. Chacun appuie pour découvrir son mot, seul, puis le cache.</li>
+          <li>Une fois le tour terminé, la discussion commence à voix haute.</li>
+          <li>Chacun donne à son tour un mot en rapport avec le sien — sans jamais le prononcer.</li>
+          <li>Un mot trop vague éveille les soupçons, un mot trop précis vend la mèche.</li>
+          <li>Après un ou deux tours de table, votez à main levée et désignez le suspect sur le téléphone.</li>
+        </ol>
+      </section>
+      <section>
+        <h3>Les points</h3>
+        <p>
+          Si l'intrus est démasqué, <strong>tous les autres marquent 2 points</strong>.
+          S'il passe au travers, <strong>l'intrus rafle 4 points</strong> à lui seul.
+          Dans les deux cas, les deux mots sont révélés.
+        </p>
+      </section>
+      <section>
+        <h3>La subtilité</h3>
+        <p>
+          L'intrus ne sait pas qu'il l'est : il croit jouer normalement. Les deux mots
+          sont proches — « la plage » et « la piscine », par exemple — et c'est ce qui
+          rend la chasse difficile. Un joueur peut très bien se dénoncer tout seul en
+          réagissant à un indice qui ne colle pas à son mot.
+        </p>
+      </section>
+      <section>
+        <h3>Quelques conseils</h3>
+        <ul>
+          <li>Ne soyez pas trop précis au premier tour : vous donneriez le mot.</li>
+          <li>Surveillez les hésitations autant que les mots.</li>
+          <li>Si vous doutez d'être l'intrus, jouez le jeu : c'est peut-être vrai.</li>
+        </ul>
+      </section>
+      <section>
+        <h3>D'où vient le contenu</h3>
+        <p>
+          Les 60 paires de mots ont été écrites pour cette version en ligne. Elles ne proviennent d'aucun jeu existant.
+        </p>
+      </section>
+    </div>
+    <div class="regles__pied">
+      <button class="bouton bouton--large" type="button" data-ferme-regles>C'est parti</button>
+    </div>
+  </dialog>
+
+  <footer class="pied">
+    <div class="conteneur pied__interieur">
+      <p><a href="../../">← Retour au catalogue</a></p>
+      <p>Aucune donnée de partie n'est enregistrée.</p>
+    </div>
+  </footer>
+
+  <script src="../../assets/js/apparitions.js" type="module"></script>
+  <script src="../../assets/js/ui-mot-piege.js" type="module"></script>
+  <script>
+    // Ouverte en « file:// », la page ne peut pas charger ses modules : plutôt
+    // qu'une interface inerte, on explique quoi faire. On se fie au protocole
+    // et non à un délai : sur une connexion lente, un délai accuse à tort un
+    // site parfaitement fonctionnel.
+    (function () {
+      if (location.protocol !== 'file:') return;
+      var alerte = document.getElementById('alerte-fichier');
+      alerte.hidden = false;
+      window.addEventListener('load', function () {
+        if (window.__jeuPret) alerte.hidden = true;
+      });
+    })();
+  </script>
+</body>
+</html>

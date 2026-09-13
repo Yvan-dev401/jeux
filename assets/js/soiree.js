@@ -1,101 +1,39 @@
-// Une soirée, entièrement côté navigateur.
-//
-// Il n'y a pas de serveur : une soirée vit dans la mémoire de la page, et son
-// instantané est encodé dans le fragment de l'URL (la partie après le « # »).
-// Un fragment n'est jamais envoyé sur le réseau : les prénoms, les scores et
-// les cartes de la soirée ne quittent donc jamais l'appareil, et rien n'est
-// écrit dans le stockage du navigateur.
+// « Ta mère en slip » — ce que ce jeu ajoute au noyau commun : un paquet de
+// cartes complétable pendant la soirée, et le tirage d'une combinaison.
 import { CATEGORIES, PAQUET_DE_BASE } from './cartes.js';
+import * as noyau from './noyau.js';
+import { ErreurSoiree, nettoyerTexte, identifiant } from './noyau.js';
+
+export { ErreurSoiree, PAQUET_DE_BASE };
+export const {
+  genererCode,
+  ajouterJoueur,
+  retirerJoueur,
+  classement,
+  prochainJoueur
+} = noyau;
 
 export const REGLES = {
-  minJoueurs: 2,
-  maxJoueurs: 12,
+  ...noyau.REGLES,
   maxCartesPerso: 300,
-  maxLongueurNom: 24,
-  maxLongueurCarte: 80,
-  dureesChrono: [30, 60, 90, 120, 180],
-  dureeChronoDefaut: 60,
-  maxTirage: 60,
-  pointsMax: 180 // le chrono le plus long : une manche ne peut pas rapporter plus
+  maxLongueurCarte: noyau.REGLES.maxLongueurTexte,
+  maxTirage: 60
 };
 
-export { PAQUET_DE_BASE };
-
-const ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // sans I, O, 0, 1
 const parCategorie = new Map(CATEGORIES.map((c) => [c.id, c]));
 
-export class ErreurSoiree extends Error {
-  constructor(message) {
-    super(message);
-    this.nom = 'ErreurSoiree';
-  }
-}
-
-function identifiant() {
-  if (globalThis.crypto?.randomUUID) return globalThis.crypto.randomUUID();
-  return `id-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
-}
-
-export function genererCode() {
-  let code = '';
-  for (let i = 0; i < 5; i += 1) {
-    code += ALPHABET[Math.floor(Math.random() * ALPHABET.length)];
-  }
-  return code;
-}
-
-function nettoyerTexte(valeur, maxLongueur, champ) {
-  if (typeof valeur !== 'string') throw new ErreurSoiree(`${champ} est requis.`);
-  const propre = valeur.replace(/\s+/g, ' ').trim();
-  if (!propre) throw new ErreurSoiree(`${champ} ne peut pas être vide.`);
-  if (propre.length > maxLongueur) {
-    throw new ErreurSoiree(`${champ} est limité à ${maxLongueur} caractères.`);
-  }
-  return propre;
-}
-
-export function creerSoiree({ nom } = {}) {
-  return {
-    code: genererCode(),
-    nom: nom ? nettoyerTexte(nom, REGLES.maxLongueurNom, 'Le nom de la soirée') : 'Soirée',
-    reglages: { duree: REGLES.dureeChronoDefaut, categories: ['personnages', 'actions'] },
-    joueurs: [],
-    cartesPerso: { personnages: [], actions: [] },
-    manches: 0,
-    // Suivi des combinaisons déjà sorties : utile pendant la soirée, jamais
-    // transporté dans le lien.
-    combinaisonsVues: new Set()
-  };
-}
-
-export function ajouterJoueur(soiree, nom) {
-  if (soiree.joueurs.length >= REGLES.maxJoueurs) {
-    throw new ErreurSoiree(`La soirée est complète (${REGLES.maxJoueurs} joueurs maximum).`);
-  }
-  const propre = nettoyerTexte(nom, REGLES.maxLongueurNom, 'Le prénom');
-  if (soiree.joueurs.some((j) => j.nom.toLowerCase() === propre.toLowerCase())) {
-    throw new ErreurSoiree('Ce prénom est déjà pris dans la soirée.');
-  }
-  const joueur = { id: identifiant(), nom: propre, score: 0, manchesJouees: 0, trouvees: 0 };
-  soiree.joueurs.push(joueur);
-  return joueur;
-}
-
-export function retirerJoueur(soiree, joueurId) {
-  const index = soiree.joueurs.findIndex((j) => j.id === joueurId);
-  if (index === -1) throw new ErreurSoiree('Joueur introuvable.');
-  soiree.joueurs.splice(index, 1);
+export function creerSoiree(options = {}) {
+  const soiree = noyau.creerSoiree(options);
+  soiree.reglages.categories = ['personnages', 'actions'];
+  soiree.cartesPerso = { personnages: [], actions: [] };
+  // Suivi des combinaisons déjà sorties : utile pendant la soirée, jamais
+  // transporté dans le lien.
+  soiree.combinaisonsVues = new Set();
   return soiree;
 }
 
 export function majReglages(soiree, { duree, categories }) {
-  if (duree !== undefined) {
-    const valeur = Number(duree);
-    if (!REGLES.dureesChrono.includes(valeur)) {
-      throw new ErreurSoiree(`Durée invalide. Choix possibles : ${REGLES.dureesChrono.join(', ')} s.`);
-    }
-    soiree.reglages.duree = valeur;
-  }
+  if (duree !== undefined) noyau.majDuree(soiree, duree);
   if (categories !== undefined) {
     if (!Array.isArray(categories) || categories.length === 0) {
       throw new ErreurSoiree('Choisis au moins une catégorie.');
@@ -137,36 +75,15 @@ export function retirerCarte(soiree, categorie, carteId) {
  * joue chacun son tour sur un seul téléphone.
  */
 export function enregistrerManche(soiree, { joueurId, points, trouvee }) {
-  const joueur = soiree.joueurs.find((j) => j.id === joueurId);
-  if (!joueur) throw new ErreurSoiree('Joueur introuvable.');
-  const valeur = Number(points);
-  if (!Number.isInteger(valeur) || valeur < 0 || valeur > REGLES.pointsMax) {
-    throw new ErreurSoiree('Score de manche invalide.');
-  }
-  joueur.score += valeur;
-  joueur.manchesJouees += 1;
-  if (trouvee) joueur.trouvees += 1;
-  soiree.manches += 1;
+  const joueur = noyau.marquer(soiree, { joueurId, points, trouvee });
+  noyau.cloreManche(soiree, [joueur]);
   return joueur;
 }
 
 export function reinitialiserScores(soiree) {
-  for (const joueur of soiree.joueurs) {
-    joueur.score = 0;
-    joueur.manchesJouees = 0;
-    joueur.trouvees = 0;
-  }
-  soiree.manches = 0;
+  noyau.reinitialiserScores(soiree);
   soiree.combinaisonsVues.clear();
   return soiree;
-}
-
-export function classement(soiree) {
-  return [...soiree.joueurs].sort((a, b) => b.score - a.score || a.nom.localeCompare(b.nom, 'fr'));
-}
-
-export function prochainJoueur(soiree) {
-  return [...soiree.joueurs].sort((a, b) => a.manchesJouees - b.manchesJouees)[0] ?? null;
 }
 
 function cartesDisponibles(soiree, categorieId) {
@@ -221,55 +138,28 @@ export function tirerCombinaisons(soiree, nombre) {
 
 /* --- Instantané : la soirée telle qu'elle voyage dans le lien --- */
 
-export function instantane(soiree) {
-  return {
-    v: 1,
-    c: soiree.code,
-    n: soiree.nom,
-    d: soiree.reglages.duree,
-    g: soiree.reglages.categories,
-    m: soiree.manches,
-    j: soiree.joueurs.map((j) => [j.nom, j.score, j.manchesJouees, j.trouvees]),
-    p: soiree.cartesPerso.personnages.map((c) => c.texte),
-    a: soiree.cartesPerso.actions.map((c) => c.texte)
-  };
-}
+export const instantane = (soiree) => ({
+  ...noyau.instantaneNoyau(soiree),
+  g: soiree.reglages.categories,
+  p: soiree.cartesPerso.personnages.map((c) => c.texte),
+  a: soiree.cartesPerso.actions.map((c) => c.texte)
+});
 
 export function depuisInstantane(donnees) {
-  if (!donnees || typeof donnees !== 'object' || donnees.v !== 1) {
-    throw new ErreurSoiree('Ce lien de soirée est illisible.');
-  }
   const soiree = creerSoiree();
-  soiree.code = /^[A-Z0-9]{3,8}$/.test(donnees.c ?? '') ? donnees.c : genererCode();
-  soiree.nom = typeof donnees.n === 'string' && donnees.n.trim() ? donnees.n.slice(0, REGLES.maxLongueurNom) : 'Soirée';
-  soiree.manches = Number.isInteger(donnees.m) && donnees.m >= 0 ? donnees.m : 0;
+  noyau.appliquerInstantaneNoyau(soiree, donnees);
 
-  if (REGLES.dureesChrono.includes(Number(donnees.d))) soiree.reglages.duree = Number(donnees.d);
   if (Array.isArray(donnees.g) && donnees.g.length && donnees.g.every((c) => parCategorie.has(c))) {
     soiree.reglages.categories = [...new Set(donnees.g)];
   }
-
-  for (const entree of Array.isArray(donnees.j) ? donnees.j.slice(0, REGLES.maxJoueurs) : []) {
-    const [nom, score, manchesJouees, trouvees] = Array.isArray(entree) ? entree : [];
-    try {
-      const joueur = ajouterJoueur(soiree, String(nom ?? ''));
-      joueur.score = Number.isInteger(score) && score >= 0 ? score : 0;
-      joueur.manchesJouees = Number.isInteger(manchesJouees) && manchesJouees >= 0 ? manchesJouees : 0;
-      joueur.trouvees = Number.isInteger(trouvees) && trouvees >= 0 ? trouvees : 0;
-    } catch {
-      // Une entrée abîmée est ignorée plutôt que de faire échouer la reprise.
-    }
-  }
-
   for (const [categorie, cle] of [['personnages', 'p'], ['actions', 'a']]) {
     for (const texte of Array.isArray(donnees[cle]) ? donnees[cle].slice(0, REGLES.maxCartesPerso) : []) {
       try {
         ajouterCarte(soiree, categorie, String(texte ?? ''));
       } catch {
-        // Idem : on garde ce qui est exploitable.
+        // On garde ce qui est exploitable.
       }
     }
   }
-
   return soiree;
 }

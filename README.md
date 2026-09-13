@@ -1,8 +1,8 @@
 # Jeux
 
 Catalogue de jeux d'ambiance à jouer ensemble, en famille ou entre amis.
-Une page d'accueil présente les jeux disponibles ; le premier jeu en ligne est
-**Ta mère en slip**.
+Une page d'accueil présente les quatre jeux disponibles, tous jouables sur un
+seul téléphone qu'on se passe.
 
 Site **100 % statique** : HTML, CSS et JavaScript, aucune dépendance, aucun
 serveur, aucune étape de build. Il se publie tel quel sur GitHub Pages.
@@ -51,6 +51,24 @@ Des milliers de groupes peuvent donc jouer en même temps partout dans le monde 
 chaque soirée est isolée par construction, puisqu'elle ne vit que sur son
 appareil.
 
+## Les jeux
+
+| Jeu | Joueurs | En deux mots |
+| --- | --- | --- |
+| **Ta mère en slip** | 2 à 12 | Devine ta combinaison de cartes en posant des questions fermées. |
+| **Qui a dit ça ?** | 3 à 12 | Chacun répond anonymement ; le meneur rend chaque réponse à son auteur. |
+| **Le mot piégé** | 4 à 12 | Tout le monde a le même mot, sauf un — qui l'ignore. Discutez, votez. |
+| **Mime ou rien** | 4 à 12 | Deux équipes, un chrono, des mimes cotés de 1 à 3 points. |
+
+Chaque jeu porte ses propres règles, en résumé sur son écran d'accueil et en
+détail derrière le bouton **Règles**.
+
+Tous partagent le même socle : `assets/js/noyau.js` tient la soirée (code,
+joueurs, scores, manches, instantané) et `assets/js/salle.js` l'interface
+commune (ouvrir ou reprendre une soirée, gérer les joueurs et le chrono,
+classement, transfert par lien, clôture). Un jeu n'écrit donc que sa mécanique
+et ses écrans de manche.
+
 ## Le jeu : Ta mère en slip
 
 À 2 ou jusqu'à 12, on retourne le smartphone face aux autres et on devine sa
@@ -85,14 +103,22 @@ points qu'il restait de secondes au chrono**. Trouver en 20 s sur un chrono de
 écoulé — n'en rapporte aucun, et la réponse est révélée. Le classement de la
 soirée cumule ces points.
 
-## Le paquet de cartes
+## Les paquets de contenu
 
-Les 201 cartes de `assets/js/cartes.js` ont été **écrites pour cette version en
-ligne**, dans l'esprit du jeu et en registre tout public. Ce ne sont ni les
-cartes du jeu de société, ni celles de l'application mobile. Les modifier ou en
-ajouter se fait directement dans ce fichier, sous forme de deux listes de
-chaînes ; les joueurs peuvent par ailleurs en ajouter en cours de soirée, sans
-toucher au code.
+Tout le contenu a été **écrit pour cette version en ligne**, en registre tout
+public. Il ne provient d'aucun jeu existant : ni du jeu de société « Ta mère en
+slip », ni de son application mobile.
+
+| Fichier | Contenu |
+| --- | --- |
+| `assets/js/cartes.js` | 201 cartes — 101 personnages, 100 actions |
+| `assets/js/questions.js` | 60 questions pour « Qui a dit ça ? » |
+| `assets/js/mots-pieges.js` | 60 paires de mots proches |
+| `assets/js/mimes.js` | 104 mimes sur trois niveaux |
+
+Chaque fichier n'est qu'une liste de chaînes : ajouter, retirer ou réécrire se
+fait directement dedans. Dans « Ta mère en slip », les joueurs peuvent en outre
+ajouter leurs propres cartes en cours de soirée, sans toucher au code.
 
 ## Développer en local
 
@@ -148,30 +174,35 @@ encore plus près, il suffirait d'héberger un fichier `woff2` et de changer
 index.html                      page d'accueil : le catalogue
 404.html                        page d'erreur autonome (aucun fichier externe)
 .nojekyll                       GitHub Pages sert le dossier tel quel
-jeux/ta-mere-en-slip/           écrans du jeu
+jeux/<nom-du-jeu>/              une page par jeu
 assets/
   css/base.css                  l'ADN : jetons, typographie, composants
   css/accueil.css               page d'accueil
   css/jeu.css                   écrans du jeu
-  js/cartes.js                  paquet de base (module, pas de fichier à charger)
-  js/soiree.js                  logique d'une soirée : joueurs, scores, tirage
-  js/lien.js                    la soirée ↔ le fragment d'URL
+  js/noyau.js                   socle d'une soirée : joueurs, scores, lien
+  js/salle.js                   interface commune : salon, classement, transfert
   js/apparitions.js             entrées en scène au défilement
-  js/ta-mere-en-slip.js         interface et déroulé d'une manche
+  js/cartes.js · questions.js · mots-pieges.js · mimes.js   les paquets
+  js/soiree.js · lien.js        « Ta mère en slip » : mécanique et lien
+  js/mot-piege.js · qui-a-dit-ca.js · mime-ou-rien.js       les autres mécaniques
+  js/ta-mere-en-slip.js · ui-*.js                           les écrans de chaque jeu
   img/favicon.svg
 tests/                          tests de la logique de soirée et des liens
 ```
 
-`soiree.js` et `lien.js` ne touchent pas au DOM : ils se testent directement
-avec Node, et se réutilisent pour un autre jeu du catalogue.
+Les moteurs (`noyau.js` et les modules de mécanique) ne touchent pas au DOM :
+ils se testent directement avec Node, sans navigateur ni greffon.
 
 ## Ajouter un jeu au catalogue
 
-1. Créer `jeux/<mon-jeu>/index.html` et ses styles/scripts dans `assets/`.
-2. Ajouter une carte dans la liste `.catalogue` de `index.html`.
-3. Garder des chemins **relatifs** (`../../assets/…`) pour que le jeu marche
+1. Créer `jeux/<mon-jeu>/index.html` sur le modèle d'un jeu existant, et son
+   module d'écrans `assets/js/ui-<mon-jeu>.js`.
+2. Écrire sa mécanique dans `assets/js/<mon-jeu>.js`, en s'appuyant sur
+   `noyau.js` ; brancher l'interface commune avec `installerSalle()`.
+3. Ajouter une carte dans la liste `.catalogue` de `index.html`.
+4. Garder des chemins **relatifs** (`../../assets/…`) pour que le jeu marche
    aussi dans un sous-dossier GitHub Pages.
-4. Charger `base.css` et n'écrire aucune couleur en dur : le jeu hérite alors
+5. Charger `base.css` et n'écrire aucune couleur en dur : le jeu hérite alors
    de l'identité visuelle, et suivra ses évolutions.
-5. Marquer les blocs à révéler avec `data-apparition` et charger
+6. Marquer les blocs à révéler avec `data-apparition` et charger
    `apparitions.js`.
