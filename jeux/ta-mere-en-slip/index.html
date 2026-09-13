@@ -386,10 +386,18 @@
   <script src="../../assets/js/ta-mere-en-slip.js" type="module"></script>
   <script>
     // Ouverte en « file:// », la page ne peut pas charger ses modules : plutôt
-    // qu'une interface inerte, on explique quoi faire.
-    setTimeout(function () {
-      if (!window.__jeuPret) document.getElementById('alerte-fichier').hidden = false;
-    }, 1200);
+    // qu'une interface inerte, on explique quoi faire. On se fie au protocole
+    // et non à un délai : sur une connexion lente, un délai accuse à tort un
+    // site parfaitement fonctionnel.
+    (function () {
+      if (location.protocol !== 'file:') return;
+      var alerte = document.getElementById('alerte-fichier');
+      alerte.hidden = false;
+      // Si le navigateur les charge quand même, l'avertissement n'a plus lieu d'être.
+      window.addEventListener('load', function () {
+        if (window.__jeuPret) alerte.hidden = true;
+      });
+    })();
   </script>
 </body>
 </html>
