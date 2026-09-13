@@ -15,7 +15,8 @@ export const REGLES = {
   maxLongueurCarte: 80,
   dureesChrono: [30, 60, 90, 120, 180],
   dureeChronoDefaut: 60,
-  maxTirage: 60
+  maxTirage: 60,
+  pointsMax: 180 // le chrono le plus long : une manche ne peut pas rapporter plus
 };
 
 export { PAQUET_DE_BASE };
@@ -75,7 +76,7 @@ export function ajouterJoueur(soiree, nom) {
   if (soiree.joueurs.some((j) => j.nom.toLowerCase() === propre.toLowerCase())) {
     throw new ErreurSoiree('Ce prénom est déjà pris dans la soirée.');
   }
-  const joueur = { id: identifiant(), nom: propre, score: 0, manchesJouees: 0 };
+  const joueur = { id: identifiant(), nom: propre, score: 0, manchesJouees: 0, trouvees: 0 };
   soiree.joueurs.push(joueur);
   return joueur;
 }
@@ -129,19 +130,22 @@ export function retirerCarte(soiree, categorie, carteId) {
   return soiree;
 }
 
-export function enregistrerManche(soiree, { joueurId, trouvees, passees }) {
+/**
+ * Clôt la manche d'un joueur : une combinaison, devinée ou non.
+ * Les points sont les secondes qu'il restait au chrono — deviner vite rapporte
+ * davantage, ce qui rend la course au « premier trouvé » lisible même quand on
+ * joue chacun son tour sur un seul téléphone.
+ */
+export function enregistrerManche(soiree, { joueurId, points, trouvee }) {
   const joueur = soiree.joueurs.find((j) => j.id === joueurId);
   if (!joueur) throw new ErreurSoiree('Joueur introuvable.');
-  const points = Number(trouvees);
-  const sautees = Number(passees ?? 0);
-  if (!Number.isInteger(points) || points < 0 || points > REGLES.maxTirage) {
+  const valeur = Number(points);
+  if (!Number.isInteger(valeur) || valeur < 0 || valeur > REGLES.pointsMax) {
     throw new ErreurSoiree('Score de manche invalide.');
   }
-  if (!Number.isInteger(sautees) || sautees < 0 || sautees > REGLES.maxTirage) {
-    throw new ErreurSoiree('Nombre de cartes passées invalide.');
-  }
-  joueur.score += points;
+  joueur.score += valeur;
   joueur.manchesJouees += 1;
+  if (trouvee) joueur.trouvees += 1;
   soiree.manches += 1;
   return joueur;
 }
@@ -150,6 +154,7 @@ export function reinitialiserScores(soiree) {
   for (const joueur of soiree.joueurs) {
     joueur.score = 0;
     joueur.manchesJouees = 0;
+    joueur.trouvees = 0;
   }
   soiree.manches = 0;
   soiree.combinaisonsVues.clear();
@@ -224,7 +229,7 @@ export function instantane(soiree) {
     d: soiree.reglages.duree,
     g: soiree.reglages.categories,
     m: soiree.manches,
-    j: soiree.joueurs.map((j) => [j.nom, j.score, j.manchesJouees]),
+    j: soiree.joueurs.map((j) => [j.nom, j.score, j.manchesJouees, j.trouvees]),
     p: soiree.cartesPerso.personnages.map((c) => c.texte),
     a: soiree.cartesPerso.actions.map((c) => c.texte)
   };
@@ -245,11 +250,12 @@ export function depuisInstantane(donnees) {
   }
 
   for (const entree of Array.isArray(donnees.j) ? donnees.j.slice(0, REGLES.maxJoueurs) : []) {
-    const [nom, score, manchesJouees] = Array.isArray(entree) ? entree : [];
+    const [nom, score, manchesJouees, trouvees] = Array.isArray(entree) ? entree : [];
     try {
       const joueur = ajouterJoueur(soiree, String(nom ?? ''));
       joueur.score = Number.isInteger(score) && score >= 0 ? score : 0;
       joueur.manchesJouees = Number.isInteger(manchesJouees) && manchesJouees >= 0 ? manchesJouees : 0;
+      joueur.trouvees = Number.isInteger(trouvees) && trouvees >= 0 ? trouvees : 0;
     } catch {
       // Une entrée abîmée est ignorée plutôt que de faire échouer la reprise.
     }

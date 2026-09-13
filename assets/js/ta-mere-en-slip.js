@@ -36,7 +36,6 @@ const etat = {
   manche: null
 };
 
-const CARTES_PAR_MANCHE = 40;
 
 /* ------------------------------------------------------------------ */
 /* Utilitaires d'affichage                                             */
@@ -366,9 +365,9 @@ async function lancerManche() {
     return;
   }
 
-  let tirage;
+  let combinaison;
   try {
-    tirage = tirerCombinaisons(soiree, CARTES_PAR_MANCHE);
+    [combinaison] = tirerCombinaisons(soiree, 1);
   } catch (erreur) {
     signalerErreur(erreur);
     return;
@@ -377,13 +376,10 @@ async function lancerManche() {
   etat.manche = {
     joueur,
     duree: soiree.reglages.duree,
-    tirage,
-    index: 0,
-    resultats: [],
+    combinaison,
     finLe: 0,
     intervalle: null,
     decompte: null,
-    verrouillage: null,
     inclinaisonPropre: null,
     terminee: false
   };
@@ -403,7 +399,8 @@ function demarrerDecompte() {
   $('bloc-verdict').hidden = true;
   $('bloc-actions-tour').hidden = true;
   $('decompte-consigne').textContent =
-    `${manche.joueur.nom}, tiens le téléphone face aux autres, écran vers eux.`;
+    `${manche.joueur.nom}, tiens le téléphone face aux autres : ils voient ta ` +
+    'combinaison, pas toi. Pose-leur des questions pour la deviner.';
 
   let reste = 3;
   $('decompte-nombre').textContent = String(reste);
@@ -443,12 +440,7 @@ function demarrerChrono() {
 }
 
 function afficherCombinaison() {
-  const manche = etat.manche;
-  const carte = manche.tirage[manche.index];
-  if (!carte) {
-    terminerManche();
-    return;
-  }
+  const carte = etat.manche.combinaison;
   const personnage = carte.parties.find((p) => p.categorie === 'personnages');
   const action = carte.parties.find((p) => p.categorie === 'actions');
 
@@ -468,100 +460,89 @@ function afficherCombinaison() {
     longueur >= 50 ? 'long' : longueur >= 30 ? 'moyen' : 'court';
 }
 
+/** Le joueur a deviné, ou il renonce : dans les deux cas la manche est finie. */
 function repondre(resultat) {
   const manche = etat.manche;
-  if (!manche || manche.terminee || manche.verrouillage) return;
-
-  const carte = manche.tirage[manche.index];
-  if (!carte) return;
-
-  manche.resultats.push({
-    resultat,
-    personnage: carte.parties.find((p) => p.categorie === 'personnages')?.texte ?? '',
-    action: carte.parties.find((p) => p.categorie === 'actions')?.texte ?? ''
-  });
-
-  vibrer(resultat === 'trouve' ? [30, 40, 30] : 60);
-
-  $('ecran-tour').className = `plein-ecran plein-ecran--${resultat === 'trouve' ? 'trouve' : 'passe'}`;
-  $('bloc-combinaison').hidden = true;
-  const verdict = $('bloc-verdict');
-  verdict.hidden = false;
-  verdict.textContent = resultat === 'trouve' ? 'TROUVÉ !' : 'PASSE';
-
-  manche.verrouillage = window.setTimeout(() => {
-    manche.verrouillage = null;
-    if (!etat.manche || etat.manche.terminee) return;
-    manche.index += 1;
-    $('ecran-tour').className = 'plein-ecran';
-    verdict.hidden = true;
-    $('bloc-combinaison').hidden = false;
-    afficherCombinaison();
-  }, 620);
+  if (!manche || manche.terminee || !manche.finLe) return;
+  terminerManche({ resultat });
 }
 
-function terminerManche({ abandon = false } = {}) {
+/**
+ * Termine la manche. `resultat` vaut 'trouve' (le joueur a deviné),
+ * 'renonce' (il passe la main) ou 'temps' (le chrono est arrivé au bout).
+ * Quitter avant même le départ n'enregistre rien.
+ */
+function terminerManche({ resultat = 'temps', sortie = false } = {}) {
   const manche = etat.manche;
   if (!manche || manche.terminee) return;
   manche.terminee = true;
 
   window.clearInterval(manche.intervalle);
   window.clearInterval(manche.decompte);
-  window.clearTimeout(manche.verrouillage);
   manche.inclinaisonPropre?.();
   libererEcran();
-  vibrer([80, 60, 120]);
 
-  if (abandon && manche.resultats.length === 0) {
+  // Manche interrompue avant le premier affichage : rien à compter.
+  if (sortie && !manche.finLe) {
     etat.manche = null;
     montrerEcran('salon');
     return;
   }
 
-  const trouvees = manche.resultats.filter((r) => r.resultat === 'trouve').length;
-  const passees = manche.resultats.length - trouvees;
+  const restant = Math.max(0, Math.ceil((manche.finLe - Date.now()) / 1000));
+  const trouvee = resultat === 'trouve';
+  const points = trouvee ? Math.max(1, restant) : 0;
+  const secondes = Math.min(manche.duree, manche.duree - restant);
+
+  vibrer(trouvee ? [40, 60, 40, 60, 90] : [120]);
+  montrerVerdict(trouvee, resultat);
 
   try {
-    enregistrerManche(etat.soiree, { joueurId: manche.joueur.id, trouvees, passees });
+    enregistrerManche(etat.soiree, { joueurId: manche.joueur.id, points, trouvee });
     majSoiree();
   } catch (erreur) {
     signalerErreur(erreur);
   }
 
-  afficherRecap(manche, trouvees, passees);
+  window.setTimeout(() => afficherRecap(manche, { trouvee, points, secondes, resultat }), 1100);
 }
 
-function afficherRecap(manche, trouvees, passees) {
+/** Aplat plein écran : le verdict se lit de loin, par toute la tablée. */
+function montrerVerdict(trouvee, resultat) {
+  $('ecran-tour').className = `plein-ecran plein-ecran--${trouvee ? 'trouve' : 'passe'}`;
+  $('bloc-combinaison').hidden = true;
+  $('bloc-decompte').hidden = true;
+  $('bloc-actions-tour').hidden = true;
+  const verdict = $('bloc-verdict');
+  verdict.hidden = false;
+  verdict.textContent = trouvee
+    ? 'TROUVÉ !'
+    : resultat === 'renonce'
+      ? 'RATÉ'
+      : 'TEMPS ÉCOULÉ';
+}
+
+function afficherRecap(manche, { trouvee, points, secondes, resultat }) {
+  const carte = manche.combinaison;
+  const personnage = carte.parties.find((p) => p.categorie === 'personnages')?.texte ?? '';
+  const action = carte.parties.find((p) => p.categorie === 'actions')?.texte ?? '';
+
+  $('recap-etiquette').textContent = trouvee ? 'Combinaison devinée' : 'Combinaison manquée';
   $('recap-joueur').textContent = manche.joueur.nom;
-  $('recap-score').textContent = `${trouvees} ${pluriel(trouvees, 'pt')}`;
-  $('recap-detail').textContent =
-    `${trouvees} ${pluriel(trouvees, 'trouvée')} · ${passees} ${pluriel(passees, 'passée')}`;
+  $('recap-score').textContent = `${points} ${pluriel(points, 'pt')}`;
+  $('recap-detail').textContent = trouvee
+    ? `Devinée en ${secondes} ${pluriel(secondes, 'seconde')}.`
+    : resultat === 'renonce'
+      ? 'Langue au chat : aucun point cette manche.'
+      : 'Chrono terminé : aucun point cette manche.';
 
-  const liste = $('recap-liste');
-  liste.textContent = '';
-  for (const ligne of manche.resultats) {
-    const li = document.createElement('li');
-    li.dataset.resultat = ligne.resultat;
-    const marque = document.createElement('span');
-    marque.className = 'liste-recap__marque';
-    marque.textContent = ligne.resultat === 'trouve' ? '✓' : '↷';
-    const texte = document.createElement('span');
-    texte.textContent = [ligne.personnage ? `Je suis ${ligne.personnage}` : '', ligne.action]
-      .filter(Boolean)
-      .join(' et ');
-    li.append(marque, texte);
-    liste.append(li);
-  }
-
-  if (manche.resultats.length === 0) {
-    const li = document.createElement('li');
-    li.textContent = 'Aucune carte jouée sur cette manche.';
-    liste.append(li);
-  }
+  $('recap-combinaison').textContent = [personnage ? `Je suis ${personnage}` : '', action]
+    .filter(Boolean)
+    .join(' et ');
 
   montrerEcran('recap');
-  // Le détail carte par carte n'est ni enregistré ni transporté dans le lien :
-  // il disparaît dès le retour au salon.
+  // La combinaison n'est ni enregistrée ni transportée dans le lien : elle
+  // disparaît dès le retour au salon.
 }
 
 /* ------------------------------------------------------------------ */
@@ -610,7 +591,7 @@ function activerInclinaison() {
       repondre('trouve');
     } else if (arme && beta > 140) {
       arme = false;
-      repondre('passe');
+      repondre('renonce');
     } else if (!arme && beta > 60 && beta < 120) {
       arme = true;
     }
@@ -692,8 +673,8 @@ function brancherEvenements() {
   });
 
   $('btn-trouve').addEventListener('click', () => repondre('trouve'));
-  $('btn-passe').addEventListener('click', () => repondre('passe'));
-  $('btn-quitter-tour').addEventListener('click', () => terminerManche({ abandon: true }));
+  $('btn-passe').addEventListener('click', () => repondre('renonce'));
+  $('btn-quitter-tour').addEventListener('click', () => terminerManche({ sortie: true }));
 
   document.addEventListener('keydown', (e) => {
     if (ecrans.tour.hidden) return;
@@ -702,9 +683,9 @@ function brancherEvenements() {
       repondre('trouve');
     } else if (e.key === 'ArrowLeft') {
       e.preventDefault();
-      repondre('passe');
+      repondre('renonce');
     } else if (e.key === 'Escape') {
-      terminerManche({ abandon: true });
+      terminerManche({ sortie: true });
     }
   });
 

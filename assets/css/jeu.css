@@ -550,34 +550,16 @@
   letter-spacing: var(--suivi-titre);
   color: var(--accent);
 }
-.liste-recap {
-  display: grid;
-  gap: 0;
-  margin: 22px 0;
-  padding: 0;
-  list-style: none;
-  max-height: 260px;
-  overflow-y: auto;
+.recap__combinaison {
+  margin: 22px 0 0;
+  padding-top: 20px;
   border-top: var(--filet);
-}
-.liste-recap li {
-  display: flex;
-  gap: 14px;
-  align-items: baseline;
-  padding: 11px 0;
-  border-bottom: var(--filet);
-  font-size: var(--txt-m);
-  color: var(--texte-doux);
-}
-.liste-recap li[data-resultat="trouve"] { color: var(--texte); }
-.liste-recap li[data-resultat="passe"] { color: var(--texte-faible); }
-.liste-recap__marque {
-  flex: none;
-  font-family: var(--police-mono);
+  font-size: clamp(1.2rem, 5vw, 1.7rem);
   font-weight: 700;
-  color: var(--accent);
+  line-height: 1.1;
+  letter-spacing: var(--suivi-titre);
+  color: var(--texte);
 }
-.liste-recap li[data-resultat="passe"] .liste-recap__marque { color: var(--texte-faible); }
 
 /* ------------------------------------------------------------------ */
 /* Utilitaires adossés aux jetons                                      */

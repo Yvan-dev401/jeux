@@ -39,6 +39,8 @@
           <p class="presentation__accroche">
             Éclate-toi avec tes potes ou en famille ! À 2 ou jusqu'à 12, retourne le
             smartphone face aux autres et devine ta combinaison de cartes en premier.
+            Toute la tablée la voit, sauf toi : pose des questions fermées pour la
+            trouver avant la fin du chrono.
           </p>
           <ul class="presentation__exemples">
             <li>Suis-je un homme ?</li>
@@ -195,7 +197,7 @@
             <label class="champ">
               <span class="champ__libelle">Qui prend le téléphone ?</span>
               <select id="choix-joueur" aria-describedby="aide-joueur"></select>
-              <span class="champ__aide" id="aide-joueur">Le téléphone se tient face aux autres : tu ne vois pas ta combinaison.</span>
+              <span class="champ__aide" id="aide-joueur">Il tient le téléphone face aux autres : eux voient sa combinaison, lui non. À lui de la deviner en posant des questions fermées.</span>
             </label>
             <button class="bouton bouton--large" type="button" id="btn-lancer" disabled>Lancer la manche</button>
           </div>
@@ -222,13 +224,13 @@
     <!-- ÉCRAN 4 : récapitulatif de manche -->
     <section class="ecran" id="ecran-recap" aria-labelledby="titre-recap" hidden>
       <div class="panneau panneau--recap">
-        <p class="etiquette">Manche terminée</p>
+        <p class="etiquette" id="recap-etiquette">Manche terminée</p>
         <h1 id="titre-recap" class="titre-recap">
           <span id="recap-joueur">Joueur</span>
         </h1>
-        <p class="recap__score" id="recap-score">0</p>
-        <p class="note" id="recap-detail">0 trouvée · 0 passée</p>
-        <ul class="liste-recap" id="recap-liste"></ul>
+        <p class="recap__score" id="recap-score">0 pt</p>
+        <p class="note" id="recap-detail"></p>
+        <p class="recap__combinaison" id="recap-combinaison"></p>
         <div class="actions-pied actions-pied--centre">
           <button class="bouton" type="button" id="btn-retour-salon">Joueur suivant</button>
         </div>
@@ -262,8 +264,8 @@
     </div>
 
     <div class="tour__pied" id="bloc-actions-tour" hidden>
-      <button class="bouton-tour bouton-tour--passe" type="button" id="btn-passe">Passe</button>
-      <button class="bouton-tour bouton-tour--trouve" type="button" id="btn-trouve">Trouvé</button>
+      <button class="bouton-tour bouton-tour--passe" type="button" id="btn-passe">Langue au chat</button>
+      <button class="bouton-tour bouton-tour--trouve" type="button" id="btn-trouve">J'ai trouvé !</button>
     </div>
   </div>
 

@@ -57,6 +57,11 @@ appareil.
 combinaison de cartes en premier. *Suis-je un homme ? Un chanteur ? J'allume le
 feu ? Je suis chez l'esthéticienne ?*
 
+**La règle.** À son tour, un joueur tient le téléphone face à la tablée : tout
+le monde voit sa combinaison — un personnage et une action — sauf lui. Il pose
+des questions fermées aux autres pour la deviner avant la fin du chrono. Une
+manche, c'est **une** combinaison : on ne les enchaîne pas.
+
 Ce que la version en ligne apporte :
 
 - jusqu'à 12 joueurs ;
@@ -66,10 +71,15 @@ Ce que la version en ligne apporte :
 - choix de la durée du chrono (30, 60, 90, 120 ou 180 s) ;
 - ça tient dans la poche : interface pensée pour le téléphone.
 
-Pendant une manche : décompte de 3 s, puis les combinaisons s'enchaînent.
-**Trouvé** / **Passe** au doigt, au clavier (→ / ←) ou en inclinant le
-téléphone quand le navigateur le permet. Le récapitulatif de la manche s'affiche
-à la fin, puis le classement de la soirée.
+Le déroulé : décompte de 3 s, la combinaison s'affiche, le chrono tourne. Le
+joueur conclut avec **J'ai trouvé !** ou **Langue au chat** — au doigt, au
+clavier (→ / ←) ou en inclinant le téléphone quand le navigateur le permet.
+
+Le score récompense la rapidité : **une combinaison devinée rapporte autant de
+points qu'il restait de secondes au chrono**. Trouver en 20 s sur un chrono de
+60 s vaut donc 40 points. Une combinaison manquée — langue au chat ou temps
+écoulé — n'en rapporte aucun, et la réponse est révélée. Le classement de la
+soirée cumule ces points.
 
 ## Développer en local
 

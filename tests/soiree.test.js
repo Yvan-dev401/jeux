@@ -63,18 +63,42 @@ test('une durée hors liste est refusée', () => {
   assert.equal(majReglages(soiree, { duree: 120 }).reglages.duree, 120);
 });
 
-test('les scores de manche s’additionnent et classent les joueurs', () => {
+test('une manche devinée rapporte des points, une manche ratée n’en rapporte pas', () => {
   const soiree = creerSoiree();
   const lea = ajouterJoueur(soiree, 'Léa');
   const yvan = ajouterJoueur(soiree, 'Yvan');
-  enregistrerManche(soiree, { joueurId: lea.id, trouvees: 7, passees: 2 });
-  enregistrerManche(soiree, { joueurId: yvan.id, trouvees: 11, passees: 1 });
-  enregistrerManche(soiree, { joueurId: lea.id, trouvees: 3, passees: 0 });
+  enregistrerManche(soiree, { joueurId: lea.id, points: 37, trouvee: true });
+  enregistrerManche(soiree, { joueurId: yvan.id, points: 0, trouvee: false });
+  enregistrerManche(soiree, { joueurId: lea.id, points: 12, trouvee: true });
+
   assert.equal(soiree.manches, 3);
-  assert.deepEqual(classement(soiree).map((j) => [j.nom, j.score]), [['Yvan', 11], ['Léa', 10]]);
+  assert.deepEqual(classement(soiree).map((j) => [j.nom, j.score]), [['Léa', 49], ['Yvan', 0]]);
+  assert.equal(classement(soiree)[0].trouvees, 2, 'deux combinaisons devinées');
+  assert.equal(classement(soiree)[1].trouvees, 0, 'aucune combinaison devinée');
   assert.equal(prochainJoueur(soiree).nom, 'Yvan', 'le joueur ayant le moins joué passe ensuite');
+
   reinitialiserScores(soiree);
-  assert.deepEqual(classement(soiree).map((j) => j.score), [0, 0]);
+  assert.deepEqual(classement(soiree).map((j) => [j.score, j.trouvees]), [[0, 0], [0, 0]]);
+});
+
+test('un score de manche invalide est refusé', () => {
+  const soiree = creerSoiree();
+  const lea = ajouterJoueur(soiree, 'Léa');
+  for (const points of [-1, 1.5, 181, 'beaucoup']) {
+    assert.throws(
+      () => enregistrerManche(soiree, { joueurId: lea.id, points, trouvee: true }),
+      /Score de manche invalide/,
+      `points refusés : ${points}`
+    );
+  }
+  assert.equal(lea.score, 0, 'aucun point n’a été accordé');
+});
+
+test('une manche ne tire qu’une seule combinaison', () => {
+  const soiree = creerSoiree();
+  const tirage = tirerCombinaisons(soiree, 1);
+  assert.equal(tirage.length, 1);
+  assert.deepEqual(tirage[0].parties.map((p) => p.categorie), ['personnages', 'actions']);
 });
 
 test('le tirage combine un personnage et une action sans répétition', () => {
@@ -117,14 +141,17 @@ test('un instantané traverse le lien sans rien perdre', () => {
   majReglages(soiree, { duree: 90 });
   ajouterCarte(soiree, 'personnages', 'une dompteuse de hamsters');
   ajouterCarte(soiree, 'actions', 'je répare un vélo');
-  enregistrerManche(soiree, { joueurId: lea.id, trouvees: 7, passees: 2 });
+  enregistrerManche(soiree, { joueurId: lea.id, points: 41, trouvee: true });
 
   const reprise = depuisFragment(versFragment(soiree));
   assert.equal(reprise.code, soiree.code);
   assert.equal(reprise.nom, 'Soirée été');
   assert.equal(reprise.reglages.duree, 90);
   assert.equal(reprise.manches, 1);
-  assert.deepEqual(reprise.joueurs.map((j) => [j.nom, j.score, j.manchesJouees]), [['Léa', 7, 1], ['Yvan', 0, 0]]);
+  assert.deepEqual(
+    reprise.joueurs.map((j) => [j.nom, j.score, j.manchesJouees, j.trouvees]),
+    [['Léa', 41, 1, 1], ['Yvan', 0, 0, 0]]
+  );
   assert.deepEqual(reprise.cartesPerso.personnages.map((c) => c.texte), ['une dompteuse de hamsters']);
   assert.deepEqual(reprise.cartesPerso.actions.map((c) => c.texte), ['je répare un vélo']);
 });
@@ -155,7 +182,7 @@ test('un instantané trafiqué est ramené à des valeurs sûres', () => {
     n: '   ',
     d: 4242,
     m: -5,
-    j: [['Léa', 3, 1], 'pas un joueur', ['', 0, 0], ['Léa', 1, 1]],
+    j: [['Léa', 3, 1, 1], 'pas un joueur', ['', 0, 0, 0], ['Léa', 1, 1, 1]],
     p: ['x'.repeat(500), 'une carte valable'],
     a: []
   });
