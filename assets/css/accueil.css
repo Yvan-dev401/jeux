@@ -7,12 +7,46 @@
 .heros {
   position: relative;
   padding-block: clamp(30px, 6vw, 64px) clamp(36px, 7vw, 80px);
+  /* Obliques figées par défaut : si le script ne tourne pas, le héros garde
+     exactement son aspect d'origine. */
   background-image: var(--spectre-marques), var(--spectre);
   background-size: 100% 11px, 100% 100%;
+  overflow: hidden;
+}
+/* Le champ animé a pris la main : les obliques figées s'effacent. */
+.heros.magnet-actif {
+  background-image: var(--spectre);
+}
+
+.magnet-lines {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(var(--colonnes, 12), 1fr);
+  grid-template-rows: repeat(var(--rangees, 8), 1fr);
+  justify-items: center;
+  align-items: center;
+  pointer-events: none;
+}
+.magnet-lines span {
+  display: block;
+  width: 2px;
+  height: 18px;
+  background: rgba(255, 255, 255, 0.66);
+  transform: rotate(var(--rotate, 22deg));
+  transform-origin: center;
+  /* Mise à jour à chaque trame : la transition ne s'achève jamais et fait
+     office de lissage, ce qui donne au champ son inertie. */
+  transition: transform 220ms var(--courbe-sortie);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .magnet-lines span { transition: none; }
 }
 
 .heros__grille {
   position: relative;
+  z-index: 1;
   display: grid;
   gap: 0;
 }

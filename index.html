@@ -33,6 +33,7 @@
 
   <main id="contenu">
     <section class="heros">
+      <div class="magnet-lines" id="magnet-heros" aria-hidden="true"></div>
       <div class="conteneur heros__grille">
         <div class="heros__panneau">
           <p class="heros__rang">
@@ -219,5 +220,9 @@
   </footer>
 
   <script src="assets/js/apparitions.js" type="module"></script>
+  <script type="module">
+    import { creerMagnetLines } from './assets/js/magnet-lines.js';
+    creerMagnetLines(document.getElementById('magnet-heros'));
+  </script>
 </body>
 </html>

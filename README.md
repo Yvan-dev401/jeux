@@ -161,7 +161,17 @@ Les principes qui vont avec :
   section en monospace ;
 - **le mouvement fait partie de l'identité** — les blocs entrent en ressort au
   défilement (`--ressort`, une courbe `linear()` échantillonnée sur un ressort),
-  légèrement décalés les uns des autres.
+  légèrement décalés les uns des autres, et le héros porte un champ de lignes
+  qui s'orientent selon le pointeur.
+
+Ce champ (`assets/js/magnet-lines.js`) est un portage en JavaScript natif du
+composant **MagnetLines** de [React Bits](https://reactbits.dev) (licence MIT) :
+la formule d'orientation est reprise telle quelle, l'ossature React est
+remplacée par du DOM, le projet n'ayant ni React ni étape de construction. Deux
+adaptations pour un fond plein écran : les centres des traits sont mesurés une
+fois plutôt qu'à chaque mouvement, et la grille s'ajuste à la surface sous un
+plafond de traits. Sans JavaScript, le héros conserve ses obliques figées ;
+avec `prefers-reduced-motion`, le champ ne suit pas le pointeur.
 
 Aucune police n'est téléchargée : les deux piles s'appuient sur les polices
 système, ce qui préserve la promesse « aucune requête réseau ». Pour coller
@@ -182,6 +192,7 @@ assets/
   js/noyau.js                   socle d'une soirée : joueurs, scores, lien
   js/salle.js                   interface commune : salon, classement, transfert
   js/apparitions.js             entrées en scène au défilement
+  js/magnet-lines.js            champ de lignes animé du héros
   js/cartes.js · questions.js · mots-pieges.js · mimes.js   les paquets
   js/soiree.js · lien.js        « Ta mère en slip » : mécanique et lien
   js/mot-piege.js · qui-a-dit-ca.js · mime-ou-rien.js       les autres mécaniques
