@@ -14,11 +14,11 @@
   overflow: hidden;
 }
 /* Le champ animé a pris la main : les obliques figées s'effacent. */
-.heros.magnet-actif {
+.heros.champ-actif {
   background-image: var(--spectre);
 }
 
-.magnet-lines {
+.champ-lignes {
   position: absolute;
   inset: 0;
   display: grid;
@@ -28,20 +28,15 @@
   align-items: center;
   pointer-events: none;
 }
-.magnet-lines span {
+.champ-lignes span {
   display: block;
   width: 2px;
   height: 18px;
   background: rgba(255, 255, 255, 0.66);
   transform: rotate(var(--rotate, 22deg));
   transform-origin: center;
-  /* Mise à jour à chaque trame : la transition ne s'achève jamais et fait
-     office de lissage, ce qui donne au champ son inertie. */
-  transition: transform 220ms var(--courbe-sortie);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .magnet-lines span { transition: none; }
+  /* Pas de transition : l'onde est déjà continue, une interpolation par-dessus
+     ne ferait qu'ajouter du retard et du travail au compositeur. */
 }
 
 .heros__grille {
