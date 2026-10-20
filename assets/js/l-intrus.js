@@ -1,13 +1,13 @@
-// « Le mot piégé » — tout le monde reçoit le même mot, sauf un.
+// « L'intrus » — tout le monde reçoit le même mot, sauf un.
 //
 // Le téléphone circule : chacun découvre son mot en privé. Puis on discute à
 // voix haute, chacun lâchant un indice sur son mot, et le groupe vote pour
 // démasquer l'intrus — qui, lui, ignore jusqu'au bout qu'il l'est.
 import * as noyau from './noyau.js';
 import { ErreurSoiree, auHasard, melanger } from './noyau.js';
-import { PAIRES, PAQUET_MOTS } from './mots-pieges.js';
+import { PAIRES, PAQUET_PAIRES } from './paires-de-mots.js';
 
-export { ErreurSoiree, PAQUET_MOTS };
+export { ErreurSoiree, PAQUET_PAIRES };
 export const { genererCode, ajouterJoueur, retirerJoueur, classement, prochainJoueur, REGLES } = noyau;
 
 export const MIN_JOUEURS = 4;

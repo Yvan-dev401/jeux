@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 import { creerLien } from '../assets/js/noyau.js';
 
 import * as mime from '../assets/js/mime-ou-rien.js';
-import * as piege from '../assets/js/mot-piege.js';
+import * as piege from '../assets/js/l-intrus.js';
 import * as qui from '../assets/js/qui-a-dit-ca.js';
 
 const remplir = (jeu, noms) => {
@@ -63,9 +63,9 @@ test('mime : les équipes survivent au lien', () => {
   );
 });
 
-/* -------------------------------- Mot piégé -------------------------------- */
+/* --------------------------------- L'intrus -------------------------------- */
 
-test('piégé : un seul joueur reçoit l’autre mot', () => {
+test('intrus : un seul joueur reçoit l’autre mot', () => {
   const { soiree } = remplir(piege, ['Léa', 'Yvan', 'Sam', 'Nina', 'Ezra']);
   const manche = piege.distribuer(soiree);
   const mots = soiree.joueurs.map((j) => piege.motPour(soiree, j.id));
@@ -75,7 +75,7 @@ test('piégé : un seul joueur reçoit l’autre mot', () => {
   assert.equal(manche.ordre.length, 5, 'tout le monde regarde son mot');
 });
 
-test('piégé : la distribution passe par tous les joueurs', () => {
+test('intrus : la distribution passe par tous les joueurs', () => {
   const { soiree } = remplir(piege, ['Léa', 'Yvan', 'Sam', 'Nina']);
   piege.distribuer(soiree);
   const vus = [];
@@ -87,7 +87,7 @@ test('piégé : la distribution passe par tous les joueurs', () => {
   assert.equal(piege.joueurCourant(soiree), null);
 });
 
-test('piégé : démasquer l’intrus fait marquer tous les autres', () => {
+test('intrus : démasquer l’intrus fait marquer tous les autres', () => {
   const { soiree } = remplir(piege, ['Léa', 'Yvan', 'Sam', 'Nina']);
   const manche = piege.distribuer(soiree);
   const issue = piege.voter(soiree, manche.intrusId);
@@ -98,7 +98,7 @@ test('piégé : démasquer l’intrus fait marquer tous les autres', () => {
   assert.equal(soiree.manches, 1);
 });
 
-test('piégé : un intrus qui passe inaperçu rafle la mise', () => {
+test('intrus : un intrus qui passe inaperçu rafle la mise', () => {
   const { soiree } = remplir(piege, ['Léa', 'Yvan', 'Sam', 'Nina']);
   const manche = piege.distribuer(soiree);
   const innocent = soiree.joueurs.find((j) => j.id !== manche.intrusId);
@@ -109,7 +109,7 @@ test('piégé : un intrus qui passe inaperçu rafle la mise', () => {
   assert.throws(() => piege.voter(soiree, innocent.id), /déjà terminée/);
 });
 
-test('piégé : le lien ne transporte jamais l’identité de l’intrus', () => {
+test('intrus : le lien ne transporte jamais l’identité de l’intrus', () => {
   const { soiree } = remplir(piege, ['Léa', 'Yvan', 'Sam', 'Nina']);
   const manche = piege.distribuer(soiree);
   const { versFragment, depuisFragment } = creerLien(piege);
@@ -119,7 +119,7 @@ test('piégé : le lien ne transporte jamais l’identité de l’intrus', () =>
   assert.equal(depuisFragment(fragment).manche, null);
 });
 
-test('piégé : il faut au moins quatre joueurs', () => {
+test('intrus : il faut au moins quatre joueurs', () => {
   const { soiree } = remplir(piege, ['Léa', 'Yvan', 'Sam']);
   assert.throws(() => piege.distribuer(soiree), /au moins 4 joueurs/);
 });

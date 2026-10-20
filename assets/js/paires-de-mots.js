@@ -1,6 +1,6 @@
-// Paquet du « Mot piégé » — écrit pour cette version, tout public.
+// Paquet de « L'intrus » — écrit pour cette version, tout public.
 // Chaque paire réunit deux mots assez proches pour que la discussion reste
-// crédible, et assez différents pour que l'imposteur se trahisse.
+// crédible, et assez différents pour que l'intrus se trahisse.
 
 export const PAIRES = [
   ['la plage', 'la piscine'], ['le chat', 'le chien'], ['le train', 'le métro'],
@@ -25,4 +25,4 @@ export const PAIRES = [
   ['l’ascenseur', 'l’escalator'], ['la lampe', 'la bougie'], ['le tambour', 'la batterie']
 ];
 
-export const PAQUET_MOTS = { paires: PAIRES.length };
+export const PAQUET_PAIRES = { paires: PAIRES.length };

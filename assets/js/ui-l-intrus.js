@@ -1,6 +1,6 @@
-// « Le mot piégé » — distribution privée, discussion, vote.
-import * as jeu from './mot-piege.js';
-import { PAQUET_MOTS } from './mots-pieges.js';
+// « L'intrus » — distribution privée, discussion, vote.
+import * as jeu from './l-intrus.js';
+import { PAQUET_PAIRES } from './paires-de-mots.js';
 import { $, installerSalle, afficherMessage, pluriel, vibrer } from './salle.js';
 
 const salle = installerSalle({
@@ -16,7 +16,7 @@ const salle = installerSalle({
   }
 });
 
-$('detail-paquet').textContent = `${PAQUET_MOTS.paires} paires`;
+$('detail-paquet').textContent = `${PAQUET_PAIRES.paires} paires`;
 
 /* ----------------------------- Distribution ------------------------------- */
 
