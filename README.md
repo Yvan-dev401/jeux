@@ -1,7 +1,7 @@
 # Jeux
 
 Catalogue de jeux d'ambiance à jouer ensemble, en famille ou entre amis.
-Une page d'accueil présente les quatre jeux disponibles, tous jouables sur un
+Une page d'accueil présente les cinq jeux disponibles, tous jouables sur un
 seul téléphone qu'on se passe.
 
 Site **100 % statique** : HTML, CSS et JavaScript, aucune dépendance, aucun
@@ -59,6 +59,7 @@ appareil.
 | **Qui a dit ça ?** | 3 à 12 | Chacun répond anonymement ; le meneur rend chaque réponse à son auteur. |
 | **Le mot piégé** | 4 à 12 | Tout le monde a le même mot, sauf un — qui l'ignore. Discutez, votez. |
 | **Mime ou rien** | 4 à 12 | Deux équipes, un chrono, des mimes cotés de 1 à 3 points. |
+| **Mot de passe** | 2 à 12 | Par binômes : l'un fait deviner un mot sans jamais le prononcer. |
 
 Chaque jeu porte ses propres règles, en résumé sur son écran d'accueil et en
 détail derrière le bouton **Règles**.
@@ -115,6 +116,7 @@ slip », ni de son application mobile.
 | `assets/js/questions.js` | 60 questions pour « Qui a dit ça ? » |
 | `assets/js/mots-pieges.js` | 60 paires de mots proches |
 | `assets/js/mimes.js` | 104 mimes sur trois niveaux |
+| `assets/js/mots-de-passe.js` | 155 mots à faire deviner |
 
 Chaque fichier n'est qu'une liste de chaînes : ajouter, retirer ou réécrire se
 fait directement dedans. Dans « Ta mère en slip », les joueurs peuvent en outre
@@ -199,7 +201,8 @@ assets/
   js/champ-lignes.js            champ de lignes ondulant du héros
   js/cartes.js · questions.js · mots-pieges.js · mimes.js   les paquets
   js/soiree.js · lien.js        « Ta mère en slip » : mécanique et lien
-  js/mot-piege.js · qui-a-dit-ca.js · mime-ou-rien.js       les autres mécaniques
+  js/mot-piege.js · qui-a-dit-ca.js · mime-ou-rien.js · mot-de-passe.js
+                                les autres mécaniques
   js/ta-mere-en-slip.js · ui-*.js                           les écrans de chaque jeu
   img/favicon.svg
 tests/                          tests de la logique de soirée et des liens

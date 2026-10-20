@@ -947,3 +947,70 @@
   color: var(--texte);
   overflow-wrap: anywhere;
 }
+
+/* ------------------------------------------------------------------ */
+/* Binômes (« Mot de passe »)                                          */
+/* ------------------------------------------------------------------ */
+
+.binomes {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: var(--filet);
+}
+.binome {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 6px 14px;
+  align-items: baseline;
+  padding: 13px 0;
+  border-bottom: var(--filet);
+}
+.binome__rang {
+  font-family: var(--police-mono);
+  font-size: var(--txt-xs);
+  font-weight: 700;
+  letter-spacing: var(--suivi-mono);
+  color: var(--accent);
+}
+.binome__noms {
+  font-size: var(--txt-m);
+  font-weight: 600;
+  color: var(--texte);
+  overflow-wrap: anywhere;
+}
+.binome__points {
+  font-family: var(--police-mono);
+  font-size: var(--txt-s);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--accent);
+}
+.binome--seul {
+  display: block;
+  font-size: var(--txt-s);
+  color: var(--texte-faible);
+}
+
+/* Trois actions : la faute, plus rare, reste au-dessus des deux principales. */
+.tour__pied--empile {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
+}
+.tour__paire {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+.bouton-tour--faute {
+  padding: 14px 16px;
+  border-color: var(--bordure-forte);
+  color: var(--texte-doux);
+  font-size: var(--txt-xs);
+}
+.bouton-tour--faute:hover {
+  background: var(--danger);
+  border-color: var(--danger);
+  color: var(--sur-accent);
+}
