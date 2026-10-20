@@ -126,6 +126,9 @@ $('btn-quitter-distribution').addEventListener('click', () => {
 
 document.addEventListener('keydown', (e) => {
   if ($('ecran-distribution').hidden) return;
+    // En plein écran, Échap sert au navigateur à en sortir : on ne cumule
+    // pas les deux effets.
+    if (document.fullscreenElement || document.webkitFullscreenElement) return;
   if (e.key === 'Escape') $('btn-quitter-distribution').click();
 });
 

@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Jeux — le catalogue de jeux à sortir en soirée</title>
   <meta name="description" content="Catalogue de jeux en ligne à jouer entre amis ou en famille. Une soirée, un lien, aucune donnée conservée. Premier jeu disponible : Ta mère en slip.">
   <meta name="theme-color" content="#fbd509">
@@ -10,6 +10,14 @@
   <meta property="og:title" content="Jeux — le catalogue de jeux à sortir en soirée">
   <meta property="og:description" content="Ouvre une soirée, passe-toi le téléphone, jouez. Rien n'est sauvegardé.">
   <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="assets/img/icone-apple-180.png">
+  <!-- Ajouté à l'écran d'accueil, le site s'ouvre sans barre de navigateur.
+       C'est la seule façon d'obtenir le plein écran sur iPhone. -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Jeux">
   <link rel="stylesheet" href="assets/css/base.css">
   <link rel="stylesheet" href="assets/css/accueil.css">
 </head>

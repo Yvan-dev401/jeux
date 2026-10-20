@@ -7,6 +7,14 @@
   <meta name="description" content="Deux équipes, un chrono, et des mimes de plus en plus improbables à faire deviner. Jusqu'à 12 joueurs, aucune donnée conservée.">
   <meta name="theme-color" content="#fbd509">
   <link rel="icon" href="../../assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="../../manifest.webmanifest">
+  <link rel="apple-touch-icon" href="../../assets/img/icone-apple-180.png">
+  <!-- Ajouté à l'écran d'accueil, le site s'ouvre sans barre de navigateur.
+       C'est la seule façon d'obtenir le plein écran sur iPhone. -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Jeux">
   <link rel="stylesheet" href="../../assets/css/base.css">
   <link rel="stylesheet" href="../../assets/css/jeu.css">
 </head>
@@ -137,9 +145,15 @@
           </div>
           <button class="bouton bouton--fantome bouton--petit" type="button" id="btn-transferer">Transférer</button>
           <button class="bouton bouton--fantome bouton--petit" type="button" data-ouvre-regles>Règles</button>
+          <button class="bouton bouton--fantome bouton--petit" type="button" data-plein-ecran hidden>Plein écran</button>
         </div>
       </div>
 
+      <p class="note astuce-plein-ecran" data-astuce-plein-ecran hidden>
+        Ton navigateur ne propose pas le plein écran. Pour gagner la place prise
+        par sa barre d'adresse : <strong>Partager → Sur l'écran d'accueil</strong>.
+        Le site s'ouvrira alors comme une application, sans aucune barre.
+      </p>
       <p class="message message--erreur" id="erreur-salon" role="alert" hidden></p>
       <p class="message message--ok" id="info-salon" role="status" hidden></p>
 
@@ -325,6 +339,10 @@
   </footer>
 
   <script src="../../assets/js/apparitions.js" type="module"></script>
+  <script type="module">
+    import { installerPleinEcran } from '../../assets/js/plein-ecran.js';
+    installerPleinEcran();
+  </script>
   <script src="../../assets/js/ui-mime-ou-rien.js" type="module"></script>
   <script>
     // Ouverte en « file:// », la page ne peut pas charger ses modules : plutôt

@@ -1014,3 +1014,18 @@
   border-color: var(--danger);
   color: var(--sur-accent);
 }
+
+
+/* ------------------------------------------------------------------ */
+/* Plein écran                                                         */
+/* ------------------------------------------------------------------ */
+
+.astuce-plein-ecran {
+  margin-bottom: 18px;
+  padding: 13px 16px;
+  border: 1px solid var(--bordure);
+  background: var(--surface);
+  font-size: var(--txt-s);
+  color: var(--texte-doux);
+}
+.astuce-plein-ecran strong { color: var(--texte); }

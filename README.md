@@ -104,6 +104,23 @@ points qu'il restait de secondes au chrono**. Trouver en 20 s sur un chrono de
 écoulé — n'en rapporte aucun, et la réponse est révélée. Le classement de la
 soirée cumule ces points.
 
+## Gagner l'écran du navigateur
+
+Pendant une manche, la barre d'adresse mange de la place. Chaque page de jeu
+porte donc un bouton **Plein écran** dans l'en-tête du salon.
+
+Safari sur iPhone ne propose pas cette API — il la réserve aux vidéos. Le
+bouton s'y efface au profit d'un conseil : **Partager → Sur l'écran
+d'accueil**. Le site s'ouvre alors comme une application, sans aucune barre,
+grâce à `manifest.webmanifest` (`display: standalone`) et aux métas Apple des
+pages. C'est même mieux qu'un plein écran : il n'y a rien à activer à chaque
+partie.
+
+Dans ce mode, la barre d'état du téléphone se superpose à la page :
+l'en-tête lui réserve sa hauteur avec `env(safe-area-inset-top)`. Et comme
+Échap sert au navigateur à quitter le plein écran, la touche n'interrompt
+plus la manche quand il est actif.
+
 ## Les paquets de contenu
 
 Tout le contenu a été **écrit pour cette version en ligne**, en registre tout
@@ -198,6 +215,7 @@ assets/
   js/noyau.js                   socle d'une soirée : joueurs, scores, lien
   js/salle.js                   interface commune : salon, classement, transfert
   js/apparitions.js             entrées en scène au défilement
+  js/plein-ecran.js             bascule plein écran et conseil iOS
   js/champ-lignes.js            champ de lignes ondulant du héros
   js/cartes.js · questions.js · paires-de-mots.js · mimes.js · mots-de-passe.js
                                 les paquets
@@ -205,7 +223,8 @@ assets/
   js/l-intrus.js · qui-a-dit-ca.js · mime-ou-rien.js · mot-de-passe.js
                                 les autres mécaniques
   js/ta-mere-en-slip.js · ui-*.js                           les écrans de chaque jeu
-  img/favicon.svg
+  img/favicon.svg · icone-192.png · icone-512.png · icone-apple-180.png
+manifest.webmanifest            ouverture depuis l'écran d'accueil
 tests/                          tests de la logique de soirée et des liens
 ```
 

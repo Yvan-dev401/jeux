@@ -298,6 +298,9 @@ document.addEventListener('keydown', (e) => {
     e.preventDefault();
     repondre('passe');
   } else if (e.key === 'Escape') {
+    // En plein écran, Échap sert au navigateur à en sortir : on ne cumule
+    // pas les deux effets.
+    if (document.fullscreenElement || document.webkitFullscreenElement) return;
     terminerManche({ sortie: true });
   }
 });

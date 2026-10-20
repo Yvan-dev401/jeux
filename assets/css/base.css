@@ -405,6 +405,9 @@ input:disabled { opacity: 0.45; cursor: not-allowed; }
   position: sticky;
   top: 0;
   z-index: 20;
+  /* Lancé depuis l'écran d'accueil, le site passe sous la barre d'état du
+     téléphone : on lui réserve sa hauteur. Ailleurs, env() vaut zéro. */
+  padding-top: env(safe-area-inset-top);
   background: var(--accent);
   color: var(--sur-accent);
 }
