@@ -1021,11 +1021,24 @@
 /* ------------------------------------------------------------------ */
 
 .astuce-plein-ecran {
-  margin-bottom: 18px;
-  padding: 13px 16px;
-  border: 1px solid var(--bordure);
+  margin: 0 0 22px;
+  padding: 16px 18px;
+  border: var(--filet);
+  border-left: 3px solid var(--accent);
   background: var(--surface);
-  font-size: var(--txt-s);
+}
+.astuce-plein-ecran p {
+  margin: 0;
+  font-size: var(--txt-m);
   color: var(--texte-doux);
+}
+.astuce-plein-ecran__titre {
+  margin: 0 0 8px !important;
+  font-family: var(--police-mono);
+  font-size: var(--txt-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: var(--suivi-mono);
+  color: var(--accent) !important;
 }
 .astuce-plein-ecran strong { color: var(--texte); }

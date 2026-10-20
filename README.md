@@ -109,9 +109,14 @@ soirée cumule ces points.
 Pendant une manche, la barre d'adresse mange de la place. Chaque page de jeu
 porte donc un bouton **Plein écran** dans l'en-tête du salon.
 
+La disponibilité se juge à l'existence de la méthode, non à ce que le
+navigateur déclare : `fullscreenEnabled` ment dans les deux sens selon les
+moteurs. Si l'appel échoue malgré tout, le bouton s'efface au profit du
+conseil plutôt que de rester inerte.
+
 Safari sur iPhone ne propose pas cette API — il la réserve aux vidéos. Le
-bouton s'y efface au profit d'un conseil : **Partager → Sur l'écran
-d'accueil**. Le site s'ouvre alors comme une application, sans aucune barre,
+conseil y prend toute la place, sur l'écran d'accueil du jeu comme dans le
+salon : **Partager → Sur l'écran d'accueil**. Le site s'ouvre alors comme une application, sans aucune barre,
 grâce à `manifest.webmanifest` (`display: standalone`) et aux métas Apple des
 pages. C'est même mieux qu'un plein écran : il n'y a rien à activer à chaque
 partie.

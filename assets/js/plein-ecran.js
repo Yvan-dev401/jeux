@@ -10,8 +10,15 @@
 
 const cible = () => document.documentElement;
 
-const estSupporte = () =>
-  Boolean(document.fullscreenEnabled || document.webkitFullscreenEnabled);
+/**
+ * On se fie à l'existence de la méthode plutôt qu'à `fullscreenEnabled`.
+ * Certains navigateurs déclarent la capacité à faux tout en l'honorant, et
+ * l'inverse arrive aussi : seul l'appel réel fait foi, d'où le repli au clic.
+ */
+const estSupporte = () => {
+  const element = cible();
+  return Boolean(element.requestFullscreen || element.webkitRequestFullscreen);
+};
 
 const elementActif = () => document.fullscreenElement || document.webkitFullscreenElement || null;
 
@@ -79,14 +86,22 @@ export function installerPleinEcran() {
     document.documentElement.classList.toggle('est-plein-ecran', actif);
   };
 
+  const basculerVersConseil = () => {
+    for (const bouton of boutons) bouton.hidden = true;
+    for (const astuce of astuces) astuce.hidden = false;
+  };
+
   for (const bouton of boutons) {
     bouton.hidden = false;
     bouton.setAttribute('aria-pressed', 'false');
     bouton.addEventListener('click', async () => {
+      const dedans = Boolean(elementActif());
       const reussi = await basculer();
-      // Le navigateur peut refuser sans lever d'erreur : on remet le libellé
-      // en accord avec la réalité plutôt qu'avec notre intention.
-      if (!reussi) rafraichir();
+      if (reussi) return;
+      // Refus à l'entrée : le navigateur annonçait une capacité qu'il n'a pas.
+      // Plutôt qu'un bouton inerte, on montre le chemin qui marche vraiment.
+      if (dedans) rafraichir();
+      else basculerVersConseil();
     });
   }
 
